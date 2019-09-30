@@ -195,19 +195,19 @@
           title="Update Related To" name="update-related-to-wizard-form">
             <panel name="wizardPanel">
                <field name="$relatedTo" title="Related to" x-type="one-to-many" x-target="com.axelor.apps.crm.db.Event"
-                      x-target-name="relatedToSelect" grid-view="related-to-dummy-field-grid" colSpan="12"></field>
+                     x-target-name="relatedToSelect" grid-view="related-to-dummy-field-grid" colSpan="12"></field>
             </panel>
 	</form>
 
 	<grid model="com.axelor.apps.base.db.Wizard" title="Related Select Events" editable="true"
-          name="related-to-dummy-field-grid" edit-icon="true">
+          name="related-to-dummy-field-grid" edit-icon="true" canNew="false">
             <field name="$relatedToSelectEvent" title="Related To Select Event" selection="crm.event.related.to.select"
               onChange="action-event-method-count-related-to-select" />
             <field name="$count" title="Count" type="integer" readonly="true" />
-            <button name="viewEventsBtn" title="View events" colSpan="3"
-            onClick="action-event-method-view-events" />
+            <button name="viewEventsBtn" title="View events" colSpan="3" 
+            onClick="action-event-method-view-events" readonly="true" icon="fa-check-circle"/>
             <button name="removeFromEventsBtn" title="Remove From Events" colSpan="3"
-            onClick="action-event-method-remove-from-events" />
+            onClick="action-event-method-remove-from-events" readonly="true" icon="fa-times"/>
 	</grid>
 
 	<action-view name="action-crm-view-event-wizard" title="Update Related To"

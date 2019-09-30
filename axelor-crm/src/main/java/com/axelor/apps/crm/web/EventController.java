@@ -525,21 +525,25 @@ public class EventController {
   }
 
   public void printRecord(ActionRequest request, ActionResponse response) {
-
-    System.err.println("test : " + request.getContext().get("relatedTo"));
     response.setValue("$relatedTo", eventService.getRecord());
   }
 
   public void removeFromEvents(ActionRequest request, ActionResponse response) {
 
     try {
-      String relatedToSelect = request.getContext().get("relatedToSelectEvent").toString();
-      String count = request.getContext().get("count").toString();
-      if (count.equals("0")) {
-        response.setAlert("No Event Found For Remove");
+
+      String model;
+
+      if (request.getContext().get("relatedToSelectEvent") != null) {
+        model = request.getContext().get("relatedToSelectEvent").toString();
+      } else {
+        List<String> ModelList = eventService.getModelList();
+        model = ModelList.get(Math.abs((int) (long) request.getContext().get("id")) - 1);
       }
 
-      response.setValue("$count", eventService.removeFromEvent(relatedToSelect));
+      //      String relatedToSelect = request.getContext().get("relatedToSelectEvent").toString();
+      //      String count = request.getContext().get("count").toString();
+      response.setValue("$count", eventService.removeFromEvent(model));
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -549,10 +553,18 @@ public class EventController {
   public void viewEvents(ActionRequest request, ActionResponse response) {
 
     try {
-      System.err.println(request.getContext().get("relatedToSelectEvent"));
-      String relatedToSelect = request.getContext().get("relatedToSelectEvent").toString();
-      String count = request.getContext().get("count").toString();
-      if (count.equals("0")) {
+      String model;
+
+      if (request.getContext().get("relatedToSelectEvent") != null) {
+        model = request.getContext().get("relatedToSelectEvent").toString();
+      } else {
+        List<String> ModelList = eventService.getModelList();
+        model = ModelList.get(Math.abs((int) (long) request.getContext().get("id")) - 1);
+      }
+
+      String count = eventService.eventsIds(model);
+
+      if (count.equals("()")) {
         response.setAlert("No Event Found");
       }
       response.setView(
@@ -560,7 +572,7 @@ public class EventController {
               .model(Event.class.getName())
               .add("grid", "event-grid")
               .add("form", "event-form")
-              .domain("self.id in " + eventService.eventsIds(relatedToSelect))
+              .domain("self.id in " + eventService.eventsIds(model))
               .map());
 
       response.setCanClose(true);

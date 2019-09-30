@@ -87,4 +87,6 @@ public interface EventService {
   public List<Event> getEvents(String eventRelatedTo);
 
   public List<Long> getModelForSelectedIds(String metaSelectItem);
+
+  public List<String> getModelList();
 }

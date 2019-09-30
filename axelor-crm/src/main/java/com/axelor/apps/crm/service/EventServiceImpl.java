@@ -44,10 +44,10 @@ import com.axelor.mail.db.MailAddress;
 import com.axelor.mail.db.MailFollower;
 import com.axelor.mail.db.repo.MailAddressRepository;
 import com.axelor.mail.db.repo.MailFollowerRepository;
-import com.axelor.meta.db.MetaSelect;
-import com.axelor.meta.db.MetaSelectItem;
+import com.axelor.meta.MetaStore;
 import com.axelor.meta.db.repo.MetaSelectItemRepository;
 import com.axelor.meta.db.repo.MetaSelectRepository;
+import com.axelor.meta.schema.views.Selection.Option;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
@@ -681,20 +681,22 @@ public class EventServiceImpl implements EventService {
   @Override
   public List<Map<String, Object>> getRecord() {
 
-    List<MetaSelect> metaSelectList =
-        metaSelectRepo.all().filter("self.name = 'crm.event.related.to.select'").fetch();
+    //    List<MetaSelect> metaSelectList =
+    //        metaSelectRepo.all().filter("self.name = 'crm.event.related.to.select'").fetch();
+    //
+    //    List<String> metaSelectItemList =
+    //        metaSelectItemRepository
+    //            .all()
+    //            .fetchStream()
+    //            .filter(a -> metaSelectList.contains(a.getSelect()))
+    //            .map(MetaSelectItem::getValue)
+    //            .collect(Collectors.toList());
 
-    List<String> metaSelectItemList =
-        metaSelectItemRepository
-            .all()
-            .fetchStream()
-            .filter(a -> metaSelectList.contains(a.getSelect()))
-            .map(MetaSelectItem::getValue)
-            .collect(Collectors.toList());
+    List<String> ModelList = this.getModelList();
 
     List<Map<String, Object>> updateRelateToList = new ArrayList<>();
 
-    for (String metaSelectItem : metaSelectItemList) {
+    for (String metaSelectItem : ModelList) {
 
       Map<String, Object> updateRelatedTo = new HashMap<String, Object>();
       updateRelatedTo.put("$relatedToSelectEvent", metaSelectItem);
@@ -770,5 +772,12 @@ public class EventServiceImpl implements EventService {
     List<Long> ModelIdList = (List<Long>) newQuery.getResultList();
 
     return ModelIdList;
+  }
+
+  @Override
+  public List<String> getModelList() {
+    List<Option> eventSelectionList = MetaStore.getSelectionList("crm.event.related.to.select");
+
+    return eventSelectionList.stream().map(l -> l.getValue()).collect(Collectors.toList());
   }
 }
