@@ -26,6 +26,7 @@ import com.axelor.exception.AxelorException;
 import com.axelor.meta.CallMethod;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 public interface EventService {
@@ -74,4 +75,16 @@ public interface EventService {
   void generateRecurrentEvents(Event event, RecurrenceConfiguration conf) throws AxelorException;
 
   public EmailAddress getEmailAddress(Event event);
+
+  public Integer getCount(String eventRelatedTo);
+
+  public List<Map<String, Object>> getRecord();
+
+  public Integer removeFromEvent(String eventRelatedTo);
+
+  public String eventsIds(String eventRelatedTo);
+
+  public List<Event> getEvents(String eventRelatedTo);
+
+  public List<Long> getModelForSelectedIds(String metaSelectItem);
 }

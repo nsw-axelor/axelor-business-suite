@@ -39,6 +39,7 @@ import com.axelor.exception.db.repo.TraceBackRepository;
 import com.axelor.exception.service.TraceBackService;
 import com.axelor.i18n.I18n;
 import com.axelor.inject.Beans;
+import com.axelor.meta.schema.actions.ActionView;
 import com.axelor.rpc.ActionRequest;
 import com.axelor.rpc.ActionResponse;
 import com.google.common.base.Joiner;
@@ -507,6 +508,65 @@ public class EventController {
       }
     } catch (Exception e) {
       TraceBackService.trace(response, e);
+    }
+  }
+
+  public void computeCount(ActionRequest request, ActionResponse response) {
+
+    try {
+      String relatedToSelect = request.getContext().get("relatedToSelectEvent").toString();
+
+      Integer count = eventService.getCount(relatedToSelect);
+      response.setValue("$count", count);
+    } catch (Exception e) {
+      e.printStackTrace();
+      response.setValue("$count", 0);
+    }
+  }
+
+  public void printRecord(ActionRequest request, ActionResponse response) {
+
+    System.err.println("test : " + request.getContext().get("relatedTo"));
+    response.setValue("$relatedTo", eventService.getRecord());
+  }
+
+  public void removeFromEvents(ActionRequest request, ActionResponse response) {
+
+    try {
+      String relatedToSelect = request.getContext().get("relatedToSelectEvent").toString();
+      String count = request.getContext().get("count").toString();
+      if (count.equals("0")) {
+        response.setAlert("No Event Found For Remove");
+      }
+
+      response.setValue("$count", eventService.removeFromEvent(relatedToSelect));
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void viewEvents(ActionRequest request, ActionResponse response) {
+
+    try {
+      System.err.println(request.getContext().get("relatedToSelectEvent"));
+      String relatedToSelect = request.getContext().get("relatedToSelectEvent").toString();
+      String count = request.getContext().get("count").toString();
+      if (count.equals("0")) {
+        response.setAlert("No Event Found");
+      }
+      response.setView(
+          ActionView.define("Event")
+              .model(Event.class.getName())
+              .add("grid", "event-grid")
+              .add("form", "event-form")
+              .domain("self.id in " + eventService.eventsIds(relatedToSelect))
+              .map());
+
+      response.setCanClose(true);
+
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 }

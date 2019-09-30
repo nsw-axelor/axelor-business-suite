@@ -35,6 +35,7 @@ import com.axelor.apps.message.db.repo.EmailAddressRepository;
 import com.axelor.apps.message.service.MessageService;
 import com.axelor.apps.message.service.TemplateMessageService;
 import com.axelor.auth.db.User;
+import com.axelor.db.JPA;
 import com.axelor.exception.AxelorException;
 import com.axelor.exception.db.repo.TraceBackRepository;
 import com.axelor.i18n.I18n;
@@ -43,6 +44,10 @@ import com.axelor.mail.db.MailAddress;
 import com.axelor.mail.db.MailFollower;
 import com.axelor.mail.db.repo.MailAddressRepository;
 import com.axelor.mail.db.repo.MailFollowerRepository;
+import com.axelor.meta.db.MetaSelect;
+import com.axelor.meta.db.MetaSelectItem;
+import com.axelor.meta.db.repo.MetaSelectItemRepository;
+import com.axelor.meta.db.repo.MetaSelectRepository;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
@@ -52,12 +57,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import javax.persistence.Query;
 import org.apache.commons.math3.exception.TooManyIterationsException;
 
 public class EventServiceImpl implements EventService {
@@ -75,6 +82,8 @@ public class EventServiceImpl implements EventService {
   @Inject private PartnerRepository partnerRepo;
 
   @Inject private LeadRepository leadRepo;
+  @Inject private MetaSelectRepository metaSelectRepo;
+  @Inject private MetaSelectItemRepository metaSelectItemRepository;
 
   private static final int ITERATION_LIMIT = 1000;
 
@@ -654,5 +663,112 @@ public class EventServiceImpl implements EventService {
         emailAddress = emailAddressRepo.find(lead.getEmailAddress().getId());
     }
     return emailAddress;
+  }
+
+  @Override
+  public Integer getCount(String eventRelatedTo) {
+
+    List<Event> eventList = this.getEvents(eventRelatedTo);
+    List<Long> metaIdList = this.getModelForSelectedIds(eventRelatedTo);
+
+    Long count =
+        eventList.stream().filter(a -> !metaIdList.contains(a.getRelatedToSelectId())).count();
+    System.err.println("count: " + count);
+
+    return count.intValue();
+  }
+
+  @Override
+  public List<Map<String, Object>> getRecord() {
+
+    List<MetaSelect> metaSelectList =
+        metaSelectRepo.all().filter("self.name = 'crm.event.related.to.select'").fetch();
+
+    List<String> metaSelectItemList =
+        metaSelectItemRepository
+            .all()
+            .fetchStream()
+            .filter(a -> metaSelectList.contains(a.getSelect()))
+            .map(MetaSelectItem::getValue)
+            .collect(Collectors.toList());
+
+    List<Map<String, Object>> updateRelateToList = new ArrayList<>();
+
+    for (String metaSelectItem : metaSelectItemList) {
+
+      Map<String, Object> updateRelatedTo = new HashMap<String, Object>();
+      updateRelatedTo.put("$relatedToSelectEvent", metaSelectItem);
+
+      List<Event> eventList = this.getEvents(metaSelectItem);
+      List<Long> metaIdList = this.getModelForSelectedIds(metaSelectItem);
+
+      Long modelCount =
+          eventList.stream().filter(a -> !metaIdList.contains(a.getRelatedToSelectId())).count();
+
+      updateRelatedTo.put("$count", modelCount);
+      updateRelateToList.add(updateRelatedTo);
+    }
+
+    return updateRelateToList;
+  }
+
+  @Override
+  @Transactional
+  public Integer removeFromEvent(String eventRelatedTo) {
+
+    List<Event> eventList = this.getEvents(eventRelatedTo);
+    List<Long> metaIdList = this.getModelForSelectedIds(eventRelatedTo);
+
+    for (Event event : eventList) {
+      if (!metaIdList.contains(event.getRelatedToSelectId())) {
+        event.setRelatedToSelect(null);
+        event.setRelatedToSelectId(null);
+        eventRepo.save(event);
+      }
+    }
+
+    return this.getCount(eventRelatedTo);
+  }
+
+  @Override
+  public String eventsIds(String eventRelatedTo) {
+
+    List<Event> eventList = this.getEvents(eventRelatedTo);
+    List<Long> metaIdList = this.getModelForSelectedIds(eventRelatedTo);
+
+    String eventsIds =
+        eventList
+            .stream()
+            .filter(a -> !metaIdList.contains(a.getRelatedToSelectId()))
+            .map(Event::getId)
+            .collect(Collectors.toList())
+            .toString()
+            .replace('[', '(')
+            .replace(']', ')');
+
+    return eventsIds;
+  }
+
+  @Override
+  public List<Event> getEvents(String eventRelatedTo) {
+    List<Event> eventList =
+        com.axelor.inject.Beans.get(com.axelor.apps.crm.db.repo.EventRepository.class)
+            .all()
+            .filter("self.relatedToSelect = ?", eventRelatedTo)
+            .fetch();
+
+    return eventList;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public List<Long> getModelForSelectedIds(String metaSelectItem) {
+
+    String[] splitString = metaSelectItem.split("db.");
+    String modelName = splitString[splitString.length - 1];
+    Query newQuery = JPA.em().createQuery("SELECT id FROM " + modelName);
+    List<Long> ModelIdList = (List<Long>) newQuery.getResultList();
+
+    return ModelIdList;
   }
 }

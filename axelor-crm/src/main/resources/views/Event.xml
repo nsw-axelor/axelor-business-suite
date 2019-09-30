@@ -4,6 +4,9 @@
 	xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
     
     <grid name="event-grid" title="Events" model="com.axelor.apps.crm.db.Event" orderBy="-startDateTime">
+        <toolbar>
+            <button name="updateRelatedTo" title="Update related to" onClick="action-crm-view-event-wizard" />
+        </toolbar> 
     	<hilite color="primary" if="statusSelect == 1 &amp;&amp; startDateTime  &lt;= __datetime__"/>
     	<hilite color="warning" if="statusSelect == 1 &amp;&amp; startDateTime  &gt; __datetime__"/>
     	<hilite color="success" if="statusSelect == 2"/>
@@ -187,6 +190,34 @@
 			<mail-followers/>
 		</panel-mail>
 	</form>
+  
+	<form model="com.axelor.apps.base.db.Wizard" onNew="action-event-method-get-record-to-select-id"
+          title="Update Related To" name="update-related-to-wizard-form">
+            <panel name="wizardPanel">
+               <field name="$relatedTo" title="Related to" x-type="one-to-many" x-target="com.axelor.apps.crm.db.Event"
+                      x-target-name="relatedToSelect" grid-view="related-to-dummy-field-grid" colSpan="12"></field>
+            </panel>
+	</form>
+
+	<grid model="com.axelor.apps.base.db.Wizard" title="Related Select Events" editable="true"
+          name="related-to-dummy-field-grid" edit-icon="true">
+            <field name="$relatedToSelectEvent" title="Related To Select Event" selection="crm.event.related.to.select"
+              onChange="action-event-method-count-related-to-select" />
+            <field name="$count" title="Count" type="integer" readonly="true" />
+            <button name="viewEventsBtn" title="View events" colSpan="3"
+            onClick="action-event-method-view-events" />
+            <button name="removeFromEventsBtn" title="Remove From Events" colSpan="3"
+            onClick="action-event-method-remove-from-events" />
+	</grid>
+
+	<action-view name="action-crm-view-event-wizard" title="Update Related To"
+       model="com.axelor.apps.base.db.Wizard">
+       <view type="form" name="update-related-to-wizard-form" />
+       <view-param name="show-toolbar" value="false" />
+       <view-param name="popup" value="true" />
+       <view-param name="popup-save" value="false" />
+       <view-param name="show-confirm" value="false" />
+	</action-view>
 	
 	<action-group name="action-group-crm-event-onnew">
         <action name="action-icalendar-event-default-record"/>
@@ -225,6 +256,22 @@
 
     <action-method name="action-event-method-manage-followers">
     	<call class="com.axelor.apps.crm.web.EventController" method="manageFollowers"/>
+    </action-method>
+    
+    <action-method name="action-event-method-count-related-to-select">
+         <call class="com.axelor.apps.crm.web.EventController" method="computeCount" />
+    </action-method>
+
+    <action-method name="action-event-method-get-record-to-select-id">
+         <call class="com.axelor.apps.crm.web.EventController" method="printRecord" />
+    </action-method>
+
+    <action-method name="action-event-method-remove-from-events">
+         <call class="com.axelor.apps.crm.web.EventController" method="removeFromEvents" />
+    </action-method>
+
+    <action-method name="action-event-method-view-events">
+         <call class="com.axelor.apps.crm.web.EventController" method="viewEvents" />
     </action-method>
 
     <action-group name="action-group-crm-meeting-contactpartner-onchange">
