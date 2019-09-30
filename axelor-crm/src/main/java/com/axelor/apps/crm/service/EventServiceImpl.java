@@ -82,8 +82,6 @@ public class EventServiceImpl implements EventService {
   @Inject private PartnerRepository partnerRepo;
 
   @Inject private LeadRepository leadRepo;
-  @Inject private MetaSelectRepository metaSelectRepo;
-  @Inject private MetaSelectItemRepository metaSelectItemRepository;
 
   private static final int ITERATION_LIMIT = 1000;
 
@@ -673,24 +671,12 @@ public class EventServiceImpl implements EventService {
 
     Long count =
         eventList.stream().filter(a -> !metaIdList.contains(a.getRelatedToSelectId())).count();
-    System.err.println("count: " + count);
 
     return count.intValue();
   }
 
   @Override
   public List<Map<String, Object>> getRecord() {
-
-    //    List<MetaSelect> metaSelectList =
-    //        metaSelectRepo.all().filter("self.name = 'crm.event.related.to.select'").fetch();
-    //
-    //    List<String> metaSelectItemList =
-    //        metaSelectItemRepository
-    //            .all()
-    //            .fetchStream()
-    //            .filter(a -> metaSelectList.contains(a.getSelect()))
-    //            .map(MetaSelectItem::getValue)
-    //            .collect(Collectors.toList());
 
     List<String> ModelList = this.getModelList();
 

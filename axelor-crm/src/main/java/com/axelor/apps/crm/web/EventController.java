@@ -511,19 +511,6 @@ public class EventController {
     }
   }
 
-  public void computeCount(ActionRequest request, ActionResponse response) {
-
-    try {
-      String relatedToSelect = request.getContext().get("relatedToSelectEvent").toString();
-
-      Integer count = eventService.getCount(relatedToSelect);
-      response.setValue("$count", count);
-    } catch (Exception e) {
-      e.printStackTrace();
-      response.setValue("$count", 0);
-    }
-  }
-
   public void printRecord(ActionRequest request, ActionResponse response) {
     response.setValue("$relatedTo", eventService.getRecord());
   }
@@ -533,10 +520,10 @@ public class EventController {
     try {
 
       String model;
-
+    
         List<String> ModelList = eventService.getModelList();
         model = ModelList.get(Math.abs((int) (long) request.getContext().get("id")) - 1);
-     
+    
       response.setValue("$count", eventService.removeFromEvent(model));
 
     } catch (Exception e) {
@@ -548,10 +535,10 @@ public class EventController {
 
     try {
       String model;
-
+  
         List<String> ModelList = eventService.getModelList();
         model = ModelList.get(Math.abs((int) (long) request.getContext().get("id")) - 1);
-     
+
       String count = eventService.eventsIds(model);
 
       if (count.equals("()")) {
