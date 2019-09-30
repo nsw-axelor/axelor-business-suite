@@ -534,15 +534,9 @@ public class EventController {
 
       String model;
 
-      if (request.getContext().get("relatedToSelectEvent") != null) {
-        model = request.getContext().get("relatedToSelectEvent").toString();
-      } else {
         List<String> ModelList = eventService.getModelList();
         model = ModelList.get(Math.abs((int) (long) request.getContext().get("id")) - 1);
-      }
-
-      //      String relatedToSelect = request.getContext().get("relatedToSelectEvent").toString();
-      //      String count = request.getContext().get("count").toString();
+     
       response.setValue("$count", eventService.removeFromEvent(model));
 
     } catch (Exception e) {
@@ -555,13 +549,9 @@ public class EventController {
     try {
       String model;
 
-      if (request.getContext().get("relatedToSelectEvent") != null) {
-        model = request.getContext().get("relatedToSelectEvent").toString();
-      } else {
         List<String> ModelList = eventService.getModelList();
         model = ModelList.get(Math.abs((int) (long) request.getContext().get("id")) - 1);
-      }
-
+     
       String count = eventService.eventsIds(model);
 
       if (count.equals("()")) {
