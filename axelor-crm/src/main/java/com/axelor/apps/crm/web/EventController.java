@@ -511,6 +511,19 @@ public class EventController {
     }
   }
 
+  public void computeCount(ActionRequest request, ActionResponse response) {
+
+    try {
+      String relatedToSelect = request.getContext().get("relatedToSelectEvent").toString();
+
+      Integer count = eventService.getCount(relatedToSelect);
+      response.setValue("$count", count);
+    } catch (Exception e) {
+      e.printStackTrace();
+      response.setValue("$count", 0);
+    }
+  }
+
   public void printRecord(ActionRequest request, ActionResponse response) {
     response.setValue("$relatedTo", eventService.getRecord());
   }
@@ -520,10 +533,16 @@ public class EventController {
     try {
 
       String model;
-    
-        List<String> ModelList = eventService.getModelList();
-        model = ModelList.get(Math.abs((int) (long) request.getContext().get("id")) - 1);
-    
+
+      if (request.getContext().get("relatedToSelectEvent") != null) {
+        model = request.getContext().get("relatedToSelectEvent").toString();
+      } else {
+        List<String> modelList = eventService.getModelList();
+        model = modelList.get(Math.abs((int) (long) request.getContext().get("id")) - 1);
+      }
+
+      //      String relatedToSelect = request.getContext().get("relatedToSelectEvent").toString();
+      //      String count = request.getContext().get("count").toString();
       response.setValue("$count", eventService.removeFromEvent(model));
 
     } catch (Exception e) {
@@ -535,9 +554,35 @@ public class EventController {
 
     try {
       String model;
-  
-        List<String> ModelList = eventService.getModelList();
-        model = ModelList.get(Math.abs((int) (long) request.getContext().get("id")) - 1);
+      System.err.println("request :" + request ); 
+      System.err.println("rawcontext :"+request.getRawContext());
+      System.err.println("action :"+request.getAction() );
+      System.err.println("limit :" + request.getLimit() ); 
+      System.err.println("model :" + request.getModel() );
+      System.err.println("offset :" + request.getOffset() );
+      System.err.println("hashcode :" + request.hashCode() );
+      System.err.println("string :" + request.toString() );
+      System.err.println("beanClass :" + request.getBeanClass() );
+      System.err.println("class :" + request.getClass() );
+      System.err.println("context :" + request.getContext() );
+      System.err.println("criteria :" + request.getCriteria());
+      System.err.println("data :" + request.getData() );
+      System.err.println("fields :" + request.getFields() );
+      System.err.println("records :" + request.getRecords() );
+      System.err.println("related :" + request.getRelated() );
+      System.err.println("scripHelper :" + request.getScriptHelper() );
+      System.err.println("sortBy :" + request.getSortBy() );
+      System.err.println("current :" + request.current());
+      System.err.println("total :" + response.getTotal() );
+      System.err.println("status :" + response.getStatus() ); 
+//      System.err.println(request.getContext().get("id")); 
+
+      if (request.getContext().get("relatedToSelectEvent") != null) {
+        model = request.getContext().get("relatedToSelectEvent").toString();
+      } else {
+        List<String> modelList = eventService.getModelList();
+        model = modelList.get(Math.abs((int) (long) request.getContext().get("id")) - 1);
+      }
 
       String count = eventService.eventsIds(model);
 
@@ -549,7 +594,7 @@ public class EventController {
               .model(Event.class.getName())
               .add("grid", "event-grid")
               .add("form", "event-form")
-              .domain("self.id in " + eventService.eventsIds(model))
+              .domain("self.id in " + count)
               .map());
 
       response.setCanClose(true);
