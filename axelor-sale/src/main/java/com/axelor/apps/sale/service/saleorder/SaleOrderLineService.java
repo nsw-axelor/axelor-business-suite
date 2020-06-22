@@ -21,6 +21,7 @@ import com.axelor.apps.account.db.TaxLine;
 import com.axelor.apps.base.db.PriceList;
 import com.axelor.apps.base.db.PriceListLine;
 import com.axelor.apps.base.db.Unit;
+import com.axelor.apps.sale.db.Pack;
 import com.axelor.apps.sale.db.PackLine;
 import com.axelor.apps.sale.db.SaleOrder;
 import com.axelor.apps.sale.db.SaleOrderLine;
@@ -28,6 +29,7 @@ import com.axelor.exception.AxelorException;
 import com.axelor.rpc.ActionResponse;
 import com.axelor.rpc.Context;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 public interface SaleOrderLineService {
@@ -145,4 +147,53 @@ public interface SaleOrderLineService {
       BigDecimal packQty,
       BigDecimal ConversionRate,
       Integer sequence);
+
+  /**
+   * To create non standard SaleOrderLine between PackLines
+   *
+   * @param pack
+   * @param saleOrder
+   * @param packQty
+   * @param saleOrderLineList
+   * @param sequence
+   * @return
+   */
+  public List<SaleOrderLine> createNonStandardSOLineBetweenPackLine(
+      Pack pack,
+      SaleOrder saleOrder,
+      BigDecimal packQty,
+      List<SaleOrderLine> saleOrderLineList,
+      Integer sequence);
+
+  /**
+   * To create non standard SaleOrderLine from Pack
+   *
+   * @param pack
+   * @param saleOrder
+   * @param packQty
+   * @param typeSelect
+   * @param sequence
+   * @return
+   */
+  public SaleOrderLine createNonStandardSaleOrderLine(
+      Pack pack, SaleOrder saleOrder, BigDecimal packQty, Integer typeSelect, Integer sequence);
+
+  /**
+   * To check that saleOrderLineList has "End of pack" type.
+   *
+   * @param saleOrderLineList
+   * @return
+   */
+  public boolean hasEndOfPackType(List<SaleOrderLine> saleOrderLineList);
+
+  /**
+   * To update product qty with pack header qty
+   * 
+   * @param saleOrderLine
+   * @param saleOrder
+   * @return
+   */
+  public void updateProductQtyWithPackHeaderQty(SaleOrderLine saleOrderLine, SaleOrder saleOrder);
+  
+  public void updateProductQty(SaleOrderLine saleOrderLine, SaleOrder saleOrder, BigDecimal qty);
 }

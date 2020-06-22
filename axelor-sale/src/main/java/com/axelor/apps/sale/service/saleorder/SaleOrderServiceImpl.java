@@ -28,6 +28,7 @@ import com.axelor.apps.sale.db.SaleOrderLine;
 import com.axelor.apps.sale.db.repo.SaleOrderRepository;
 import com.axelor.apps.sale.exception.IExceptionMessage;
 import com.axelor.apps.sale.report.IReport;
+import com.axelor.common.ObjectUtils;
 import com.axelor.exception.AxelorException;
 import com.axelor.exception.db.repo.TraceBackRepository;
 import com.axelor.exception.service.TraceBackService;
@@ -135,20 +136,24 @@ public class SaleOrderServiceImpl implements SaleOrderService {
   @Override
   @Transactional
   public SaleOrder addPack(SaleOrder saleOrder, Pack pack, BigDecimal packQty) {
+
+    List<PackLine> packLineList = pack.getComponents();
+    if (ObjectUtils.isEmpty(packLineList)) {
+      return saleOrder;
+    }
+    packLineList.sort(Comparator.comparing(PackLine::getSequence));
     Integer sequence = 0;
 
     List<SaleOrderLine> soLines = saleOrder.getSaleOrderLineList();
     if (soLines != null && !soLines.isEmpty()) {
-      sequence =
-          Collections.max(
-              soLines.stream().map(soLine -> soLine.getSequence()).collect(Collectors.toSet()));
+      sequence = soLines.stream().mapToInt(SaleOrderLine::getSequence).max().getAsInt();
     }
 
-    BigDecimal ConversionRate = new BigDecimal(1.00);
+    BigDecimal conversionRate = new BigDecimal(1.00);
     if (pack.getCurrency() != null
         && !pack.getCurrency().getCode().equals(saleOrder.getCurrency().getCode())) {
       try {
-        ConversionRate =
+        conversionRate =
             Beans.get(CurrencyConversionService.class)
                 .convert(pack.getCurrency(), saleOrder.getCurrency());
       } catch (MalformedURLException | JSONException | AxelorException e) {
@@ -156,11 +161,16 @@ public class SaleOrderServiceImpl implements SaleOrderService {
       }
     }
 
+    if (Boolean.FALSE.equals(pack.getDoNotDisplayHeaderAndEndPack())) {
+      soLines =
+          saleOrderService.createNonStandardSOLineBetweenPackLine(
+              pack, saleOrder, packQty, soLines, ++sequence);
+    }
     SaleOrderLine soLine;
-    for (PackLine packLine : pack.getComponents()) {
+    for (PackLine packLine : packLineList) {
       soLine =
           saleOrderService.createSaleOrderLine(
-              packLine, saleOrder, packQty, ConversionRate, ++sequence);
+              packLine, saleOrder, packQty, conversionRate, ++sequence);
       if (soLine != null) {
         soLine.setSaleOrder(saleOrder);
         soLines.add(soLine);

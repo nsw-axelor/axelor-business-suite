@@ -402,7 +402,7 @@ public abstract class InvoiceGenerator {
 
     for (InvoiceLine invoiceLine : invoice.getInvoiceLineList()) {
 
-      if (invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_TITLE) {
+      if (invoiceLine.getTypeSelect() != InvoiceLineRepository.TYPE_NORMAL) {
         continue;
       }
 

@@ -29,6 +29,7 @@ import com.axelor.apps.account.service.app.AppAccountService;
 import com.axelor.apps.account.service.invoice.InvoiceLineServiceImpl;
 import com.axelor.apps.account.service.invoice.InvoiceToolService;
 import com.axelor.apps.account.service.invoice.generator.InvoiceLineGenerator;
+import com.axelor.apps.account.translation.ITranslation;
 import com.axelor.apps.base.db.Currency;
 import com.axelor.apps.base.db.PriceListLine;
 import com.axelor.apps.base.db.Product;
@@ -39,9 +40,11 @@ import com.axelor.apps.base.service.PriceListService;
 import com.axelor.apps.purchase.db.PurchaseOrderLine;
 import com.axelor.apps.purchase.service.PurchaseProductService;
 import com.axelor.apps.purchase.service.SupplierCatalogService;
+import com.axelor.apps.sale.db.Pack;
 import com.axelor.apps.sale.db.PackLine;
 import com.axelor.apps.supplychain.service.app.AppSupplychainService;
 import com.axelor.exception.AxelorException;
+import com.axelor.i18n.I18n;
 import com.axelor.inject.Beans;
 import com.google.inject.Inject;
 import java.math.BigDecimal;
@@ -338,5 +341,76 @@ public class InvoiceLineSupplychainService extends InvoiceLineServiceImpl {
           }
         };
     return invoiceLineGenerator.creates();
+  }
+
+  /**
+   * To create non standard InvoiceLines between PackLines
+   *
+   * @param pack
+   * @param invoice
+   * @param packQty
+   * @param invoiceLineList
+   * @param sequence
+   * @return
+   */
+  public List<InvoiceLine> createNonStandardInvoiceLineBetweenPackLine(
+      Pack pack,
+      Invoice invoice,
+      BigDecimal packQty,
+      List<InvoiceLine> invoiceLineList,
+      Integer sequence) {
+    InvoiceLine invoiceLine;
+    Integer typeSelect = InvoiceLineRepository.TYPE_START_OF_PACK;
+    for (int i = 0; i < 2; i++) {
+      invoiceLine = this.createNonStandardInvoiceLine(pack, invoice, packQty, typeSelect, sequence);
+      invoiceLineList.add(invoiceLine);
+      if (typeSelect == InvoiceLineRepository.TYPE_START_OF_PACK) {
+        sequence += pack.getComponents().size() + 1;
+        typeSelect = InvoiceLineRepository.TYPE_END_OF_PACK;
+      }
+    }
+
+    return invoiceLineList;
+  }
+
+  /**
+   * To create non standard InvoiceLine from Pack
+   *
+   * @param pack
+   * @param invoice
+   * @param packQty
+   * @param typeSelect
+   * @param sequence
+   * @return
+   */
+  public InvoiceLine createNonStandardInvoiceLine(
+      Pack pack, Invoice invoice, BigDecimal packQty, Integer typeSelect, Integer sequence) {
+
+    InvoiceLine invoiceLine = new InvoiceLine();
+    invoiceLine.setTypeSelect(typeSelect);
+    if (typeSelect == InvoiceLineRepository.TYPE_START_OF_PACK) {
+      invoiceLine.setProductName(pack.getName());
+      invoiceLine.setQty(packQty);
+    } else {
+      invoiceLine.setProductName(I18n.get(ITranslation.INVOICE_LINE_END_OF_PACK));
+      invoiceLine.setIsShowTotal(pack.getIsShowTotal());
+      invoiceLine.setIsHideUnitAmounts(pack.getIsHideUnitAmounts());
+    }
+    invoiceLine.setInvoice(invoice);
+    invoiceLine.setSequence(sequence);
+    return invoiceLine;
+  }
+
+  /**
+   * To check that invoiceLineList has "End of pack" type.
+   *
+   * @param invoiceLineList
+   * @return
+   */
+  public boolean hasEndOfPackType(List<InvoiceLine> invoiceLineList) {
+    return invoiceLineList
+        .stream()
+        .anyMatch(
+            invoiceLine -> invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_END_OF_PACK);
   }
 }

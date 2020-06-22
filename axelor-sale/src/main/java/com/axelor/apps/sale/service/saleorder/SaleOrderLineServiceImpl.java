@@ -32,21 +32,28 @@ import com.axelor.apps.base.service.ProductMultipleQtyService;
 import com.axelor.apps.base.service.app.AppBaseService;
 import com.axelor.apps.base.service.tax.AccountManagementService;
 import com.axelor.apps.base.service.tax.FiscalPositionService;
+import com.axelor.apps.sale.db.Pack;
 import com.axelor.apps.sale.db.PackLine;
 import com.axelor.apps.sale.db.SaleOrder;
 import com.axelor.apps.sale.db.SaleOrderLine;
 import com.axelor.apps.sale.db.repo.SaleOrderLineRepository;
+import com.axelor.apps.sale.db.repo.SaleOrderRepository;
 import com.axelor.apps.sale.service.app.AppSaleService;
+import com.axelor.apps.sale.translation.ITranslation;
+import com.axelor.common.ObjectUtils;
 import com.axelor.exception.AxelorException;
 import com.axelor.exception.service.TraceBackService;
+import com.axelor.i18n.I18n;
 import com.axelor.inject.Beans;
 import com.axelor.rpc.ActionResponse;
 import com.axelor.rpc.Context;
 import com.google.inject.Inject;
+import com.google.inject.persist.Transactional;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,17 +62,40 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
 
   private final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  @Inject protected CurrencyService currencyService;
+  protected CurrencyService currencyService;
+  protected PriceListService priceListService;
+  protected ProductMultipleQtyService productMultipleQtyService;
+  protected AppBaseService appBaseService;
+  protected AppSaleService appSaleService;
+  protected AccountManagementService accountManagementService;
+  protected SaleOrderLineRepository saleOrderLineRepository;
+  protected SaleOrderRepository saleOrderRepository;
+  protected SaleOrderMarginService saleOrderMarginService;
+  protected SaleOrderComputeService saleOrderComputeService;
 
-  @Inject protected PriceListService priceListService;
-
-  @Inject protected ProductMultipleQtyService productMultipleQtyService;
-
-  @Inject protected AppBaseService appBaseService;
-
-  @Inject protected AppSaleService appSaleService;
-
-  @Inject protected AccountManagementService accountManagementService;
+  @Inject
+  public SaleOrderLineServiceImpl(
+      CurrencyService currencyService,
+      PriceListService priceListService,
+      ProductMultipleQtyService productMultipleQtyService,
+      AppBaseService appBaseService,
+      AppSaleService appSaleService,
+      AccountManagementService accountManagementService,
+      SaleOrderLineRepository saleOrderLineRepository,
+      SaleOrderRepository saleOrderRepository,
+      SaleOrderMarginService saleOrderMarginService,
+      SaleOrderComputeService saleOrderComputeService) {
+    this.currencyService = currencyService;
+    this.priceListService = priceListService;
+    this.productMultipleQtyService = productMultipleQtyService;
+    this.appBaseService = appBaseService;
+    this.appSaleService = appSaleService;
+    this.accountManagementService = accountManagementService;
+    this.saleOrderLineRepository = saleOrderLineRepository;
+    this.saleOrderRepository = saleOrderRepository;
+    this.saleOrderMarginService = saleOrderMarginService;
+    this.saleOrderComputeService = saleOrderComputeService;
+  }
 
   @Override
   public void computeProductInformation(SaleOrderLine saleOrderLine, SaleOrder saleOrder)
@@ -553,7 +583,7 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
       PackLine packLine,
       SaleOrder saleOrder,
       BigDecimal packQty,
-      BigDecimal ConversionRate,
+      BigDecimal conversionRate,
       Integer sequence) {
     if (packLine.getProductName() != null) {
       SaleOrderLine soLine = new SaleOrderLine();
@@ -572,18 +602,16 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
       soLine.setTypeSelect(packLine.getTypeSelect());
       soLine.setSequence(sequence);
       if (packLine.getPrice() != null) {
-        soLine.setPrice(packLine.getPrice().multiply(ConversionRate));
+        soLine.setPrice(packLine.getPrice().multiply(conversionRate));
       }
-      soLine.setIsShowTotal(packLine.getIsShowTotal());
-      soLine.setIsHideUnitAmounts(packLine.getIsHideUnitAmounts());
 
       if (product != null) {
         if (appSaleService.getAppSale().getIsEnabledProductDescriptionCopy()) {
           soLine.setDescription(product.getDescription());
         }
         try {
-          Beans.get(SaleOrderLineService.class).fillPrice(soLine, saleOrder);
-          Beans.get(SaleOrderLineService.class).computeValues(saleOrder, soLine);
+          this.fillPrice(soLine, saleOrder);
+          this.computeValues(saleOrder, soLine);
         } catch (AxelorException e) {
           TraceBackService.trace(e);
         }
@@ -591,5 +619,106 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
       return soLine;
     }
     return null;
+  }
+
+  @Override
+  public List<SaleOrderLine> createNonStandardSOLineBetweenPackLine(
+      Pack pack,
+      SaleOrder saleOrder,
+      BigDecimal packQty,
+      List<SaleOrderLine> saleOrderLineList,
+      Integer sequence) {
+    SaleOrderLine saleOrderLine;
+    Integer typeSelect = SaleOrderLineRepository.TYPE_START_OF_PACK;
+    for (int i = 0; i < 2; i++) {
+      saleOrderLine =
+          this.createNonStandardSaleOrderLine(pack, saleOrder, packQty, typeSelect, sequence);
+      saleOrderLineList.add(saleOrderLine);
+      if (typeSelect == SaleOrderLineRepository.TYPE_START_OF_PACK) {
+        sequence += pack.getComponents().size() + 1;
+        typeSelect = SaleOrderLineRepository.TYPE_END_OF_PACK;
+      }
+    }
+
+    return saleOrderLineList;
+  }
+
+  @Override
+  public SaleOrderLine createNonStandardSaleOrderLine(
+      Pack pack, SaleOrder saleOrder, BigDecimal packQty, Integer typeSelect, Integer sequence) {
+
+    SaleOrderLine saleOrderLine = new SaleOrderLine();
+    saleOrderLine.setTypeSelect(typeSelect);
+    if (typeSelect == SaleOrderLineRepository.TYPE_START_OF_PACK) {
+      saleOrderLine.setProductName(pack.getName());
+      saleOrderLine.setQty(packQty);
+    } else {
+      saleOrderLine.setProductName(I18n.get(ITranslation.SALE_ORDER_LINE_END_OF_PACK));
+      saleOrderLine.setIsShowTotal(pack.getIsShowTotal());
+      saleOrderLine.setIsHideUnitAmounts(pack.getIsHideUnitAmounts());
+    }
+    saleOrderLine.setSaleOrder(saleOrder);
+    saleOrderLine.setSequence(sequence);
+    return saleOrderLine;
+  }
+
+  @Override
+  public boolean hasEndOfPackType(List<SaleOrderLine> saleOrderLineList) {
+    return saleOrderLineList
+        .stream()
+        .anyMatch(
+            saleOrderLine ->
+                saleOrderLine.getTypeSelect() == SaleOrderLineRepository.TYPE_END_OF_PACK);
+  }
+
+  @Override
+  @Transactional
+  public void updateProductQtyWithPackHeaderQty(SaleOrderLine saleOrderLine, SaleOrder saleOrder) {
+    saleOrder = saleOrderRepository.find(saleOrder.getId());
+    SaleOrderLine oldSaleOrderLine = saleOrderLineRepository.find(saleOrderLine.getId());
+    BigDecimal qtyDiff = saleOrderLine.getQty().subtract(oldSaleOrderLine.getQty());
+    if (ObjectUtils.isEmpty(oldSaleOrderLine) || qtyDiff.equals(BigDecimal.ZERO)) {
+      return;
+    }
+    List<SaleOrderLine> saleOrderLineList = saleOrder.getSaleOrderLineList();
+    boolean isStartOFPack = false;
+    BigDecimal newQty;
+    for (SaleOrderLine SOLine : saleOrderLineList) {
+      if (SOLine.getId().equals(saleOrderLine.getId())
+          && SOLine.getTypeSelect() == SaleOrderLineRepository.TYPE_START_OF_PACK) {
+        //SOLine.setQty(saleOrderLine.getQty());
+        isStartOFPack = true;
+      } else if (isStartOFPack) {
+        if (SOLine.getTypeSelect() == SaleOrderLineRepository.TYPE_END_OF_PACK) {
+          break;
+        }
+        newQty = SOLine.getQty().add(qtyDiff);
+        this.updateProductQty(SOLine, saleOrder, newQty);
+      }
+    }
+
+//    try {
+//      saleOrder = saleOrderComputeService.computeSaleOrder(saleOrder);
+//      saleOrderMarginService.computeMarginSaleOrder(saleOrder);
+//    } catch (AxelorException e) {
+//      TraceBackService.trace(e);
+//    }
+    //saleOrderRepository.save(saleOrder);
+  }
+
+  @Override
+  public void updateProductQty(SaleOrderLine saleOrderLine, SaleOrder saleOrder, BigDecimal qty) {
+
+    if (qty.compareTo(BigDecimal.ZERO) < 0) {
+      return;
+    }
+    saleOrderLine.setQty(
+        qty.setScale(appBaseService.getNbDecimalDigitForQty(), RoundingMode.HALF_EVEN));
+    try {
+      this.fillPrice(saleOrderLine, saleOrder);
+      this.computeValues(saleOrder, saleOrderLine);
+    } catch (AxelorException e) {
+      TraceBackService.trace(e);
+    }
   }
 }

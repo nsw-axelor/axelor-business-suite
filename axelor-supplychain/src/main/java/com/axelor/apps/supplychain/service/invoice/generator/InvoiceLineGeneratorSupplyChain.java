@@ -196,21 +196,30 @@ public abstract class InvoiceLineGeneratorSupplyChain extends InvoiceLineGenerat
     List<AnalyticMoveLine> analyticMoveLineList = null;
 
     if (saleOrderLine != null) {
-      if (saleOrderLine.getTypeSelect() == SaleOrderLineRepository.TYPE_TITLE) {
-        invoiceLine.setIsHideUnitAmounts(saleOrderLine.getIsHideUnitAmounts());
-        invoiceLine.setIsShowTotal(saleOrderLine.getIsShowTotal());
-      } else {
-        if (saleOrderLine.getAnalyticDistributionTemplate() != null) {
-          invoiceLine.setAnalyticDistributionTemplate(
-              saleOrderLine.getAnalyticDistributionTemplate());
-          this.copyAnalyticMoveLines(saleOrderLine.getAnalyticMoveLineList(), invoiceLine);
-          analyticMoveLineList = invoiceLineService.computeAnalyticDistribution(invoiceLine);
-        } else {
-          analyticMoveLineList =
-              invoiceLineService.getAndComputeAnalyticDistribution(invoiceLine, invoice);
-          analyticMoveLineList.stream().forEach(invoiceLine::addAnalyticMoveLineListItem);
-        }
+
+      switch (saleOrderLine.getTypeSelect()) {
+        case SaleOrderLineRepository.TYPE_END_OF_PACK:
+          invoiceLine.setIsHideUnitAmounts(saleOrderLine.getIsHideUnitAmounts());
+          invoiceLine.setIsShowTotal(saleOrderLine.getIsShowTotal());
+          break;
+
+        case SaleOrderLineRepository.TYPE_NORMAL:
+          if (saleOrderLine.getAnalyticDistributionTemplate() != null) {
+            invoiceLine.setAnalyticDistributionTemplate(
+                saleOrderLine.getAnalyticDistributionTemplate());
+            this.copyAnalyticMoveLines(saleOrderLine.getAnalyticMoveLineList(), invoiceLine);
+            analyticMoveLineList = invoiceLineService.computeAnalyticDistribution(invoiceLine);
+          } else {
+            analyticMoveLineList =
+                invoiceLineService.getAndComputeAnalyticDistribution(invoiceLine, invoice);
+            analyticMoveLineList.stream().forEach(invoiceLine::addAnalyticMoveLineListItem);
+          }
+          break;
+
+        default:
+          return invoiceLine;
       }
+
     } else if (purchaseOrderLine != null) {
 
       if (purchaseOrderLine.getAnalyticDistributionTemplate() != null) {

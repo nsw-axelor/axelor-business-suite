@@ -37,7 +37,6 @@ import com.axelor.apps.sale.db.AdvancePayment;
 import com.axelor.apps.sale.db.Pack;
 import com.axelor.apps.sale.db.PackLine;
 import com.axelor.apps.sale.db.SaleOrder;
-import com.axelor.apps.sale.db.repo.PackLineRepository;
 import com.axelor.apps.supplychain.db.Timetable;
 import com.axelor.apps.supplychain.db.repo.TimetableRepository;
 import com.axelor.apps.supplychain.service.InvoiceLineSupplychainService;
@@ -191,32 +190,34 @@ public class InvoiceServiceSupplychainImpl extends InvoiceServiceImpl
   public void computePackTotal(Invoice invoice) {
     List<InvoiceLine> invoiceLineList = invoice.getInvoiceLineList();
 
-    if (ObjectUtils.notEmpty((invoiceLineList))) {
+    if (ObjectUtils.isEmpty((invoiceLineList))
+        || !invoiceLineSupplychainService.hasEndOfPackType(invoiceLineList)) {
+      return;
+    }
+    invoiceLineList.sort(Comparator.comparing(InvoiceLine::getSequence));
+    BigDecimal totalExTaxTotal = BigDecimal.ZERO;
+    BigDecimal totalInTaxTotal = BigDecimal.ZERO;
 
-      invoiceLineList.sort(Comparator.comparing(InvoiceLine::getSequence));
-
-      BigDecimal totalExTaxTotal = BigDecimal.ZERO;
-      BigDecimal totalInTaxTotal = BigDecimal.ZERO;
-      boolean isShowTotal = false;
-      boolean isFirstTitleLine = true;
-      for (InvoiceLine invoiceLine : invoiceLineList) {
-        if (invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_TITLE) {
-          if (isFirstTitleLine) {
-            isShowTotal = invoiceLine.getIsShowTotal();
-          } else {
-            invoiceLine.setQty(BigDecimal.ZERO);
-          }
-          isFirstTitleLine = !isFirstTitleLine;
-          invoiceLine.setExTaxTotal(
-              isFirstTitleLine && isShowTotal ? totalExTaxTotal : BigDecimal.ZERO);
-          invoiceLine.setInTaxTotal(
-              isFirstTitleLine && isShowTotal ? totalInTaxTotal : BigDecimal.ZERO);
-          totalExTaxTotal = BigDecimal.ZERO;
-          totalInTaxTotal = BigDecimal.ZERO;
-        } else {
+    for (InvoiceLine invoiceLine : invoiceLineList) {
+      switch (invoiceLine.getTypeSelect()) {
+        case InvoiceLineRepository.TYPE_NORMAL:
           totalExTaxTotal = totalExTaxTotal.add(invoiceLine.getExTaxTotal());
           totalInTaxTotal = totalInTaxTotal.add(invoiceLine.getInTaxTotal());
-        }
+          break;
+
+        case InvoiceLineRepository.TYPE_TITLE:
+          break;
+
+        case InvoiceLineRepository.TYPE_END_OF_PACK:
+          invoiceLine.setQty(BigDecimal.ZERO);
+          invoiceLine.setExTaxTotal(
+              invoiceLine.getIsShowTotal() ? totalExTaxTotal : BigDecimal.ZERO);
+          invoiceLine.setInTaxTotal(
+              invoiceLine.getIsShowTotal() ? totalInTaxTotal : BigDecimal.ZERO);
+
+        default:
+          totalExTaxTotal = totalInTaxTotal = BigDecimal.ZERO;
+          break;
       }
     }
     invoice.setInvoiceLineList(invoiceLineList);
@@ -228,7 +229,8 @@ public class InvoiceServiceSupplychainImpl extends InvoiceServiceImpl
     if (ObjectUtils.notEmpty(invoiceLineList)) {
       invoiceLineList
           .stream()
-          .filter(invoiceLine -> invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_TITLE)
+          .filter(
+              invoiceLine -> invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_END_OF_PACK)
           .forEach(
               invoiceLine -> {
                 invoiceLine.setIsHideUnitAmounts(Boolean.FALSE);
@@ -243,31 +245,36 @@ public class InvoiceServiceSupplychainImpl extends InvoiceServiceImpl
   @Override
   @Transactional
   public Invoice addPack(Invoice invoice, Pack pack, BigDecimal packQty) throws AxelorException {
+
+    List<PackLine> packLineList = pack.getComponents();
+    if (ObjectUtils.isEmpty(packLineList)) {
+      return invoice;
+    }
+    packLineList.sort(Comparator.comparing(PackLine::getSequence));
     Integer sequence = 0;
     List<InvoiceLine> invoiceLineList = invoice.getInvoiceLineList();
     if (ObjectUtils.notEmpty(invoiceLineList)) {
       sequence = invoiceLineList.stream().mapToInt(InvoiceLine::getSequence).max().getAsInt();
     }
+    if (Boolean.FALSE.equals(pack.getDoNotDisplayHeaderAndEndPack())) {
+      invoiceLineList =
+          invoiceLineSupplychainService.createNonStandardInvoiceLineBetweenPackLine(
+              pack, invoice, packQty, invoiceLineList, ++sequence);
+    }
     List<InvoiceLine> invoiceLineListGenerated = null;
-    for (PackLine packLine :
-        pack.getComponents()
-            .stream()
-            .sorted(Comparator.comparing(PackLine::getSequence))
-            .collect(Collectors.toList())) {
-      if (packLine.getTypeSelect() == PackLineRepository.TYPE_TITLE) {
+    for (PackLine packLine : packLineList) {
+      if (packLine.getTypeSelect() == InvoiceLineRepository.TYPE_NORMAL) {
+        invoiceLineListGenerated =
+            invoiceLineSupplychainService.createInvoiceLine(packLine, invoice, packQty, ++sequence);
+      } else {
         invoiceLineListGenerated =
             invoiceLineSupplychainService.createTitleInvoiceLine(
                 packLine, invoice, packQty, ++sequence);
-      } else {
-        invoiceLineListGenerated =
-            invoiceLineSupplychainService.createInvoiceLine(packLine, invoice, packQty, ++sequence);
       }
       invoiceLineList.addAll(invoiceLineListGenerated);
     }
-    if (ObjectUtils.notEmpty(invoiceLineList)) {
-      invoice = this.compute(invoice);
-      invoiceRepo.save(invoice);
-    }
+    invoice = this.compute(invoice);
+    invoiceRepo.save(invoice);
 
     return invoice;
   }

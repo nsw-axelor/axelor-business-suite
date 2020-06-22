@@ -18,9 +18,20 @@
 package com.axelor.apps.businessproject.service;
 
 import com.axelor.apps.account.db.AnalyticMoveLine;
+import com.axelor.apps.account.service.AnalyticMoveLineService;
+import com.axelor.apps.account.service.app.AppAccountService;
+import com.axelor.apps.base.service.CurrencyService;
+import com.axelor.apps.base.service.PriceListService;
+import com.axelor.apps.base.service.ProductMultipleQtyService;
+import com.axelor.apps.base.service.app.AppBaseService;
+import com.axelor.apps.base.service.tax.AccountManagementService;
 import com.axelor.apps.project.db.Project;
 import com.axelor.apps.sale.db.SaleOrderLine;
 import com.axelor.apps.sale.db.repo.SaleOrderLineRepository;
+import com.axelor.apps.sale.db.repo.SaleOrderRepository;
+import com.axelor.apps.sale.service.app.AppSaleService;
+import com.axelor.apps.sale.service.saleorder.SaleOrderComputeService;
+import com.axelor.apps.sale.service.saleorder.SaleOrderMarginService;
 import com.axelor.apps.supplychain.service.SaleOrderLineServiceSupplyChainImpl;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
@@ -29,7 +40,34 @@ import java.util.List;
 public class SaleOrderLineProjectServiceImpl extends SaleOrderLineServiceSupplyChainImpl
     implements SaleOrderLineProjectService {
 
-  @Inject private SaleOrderLineRepository saleOrderLineRepo;
+  @Inject
+  public SaleOrderLineProjectServiceImpl(
+      CurrencyService currencyService,
+      PriceListService priceListService,
+      ProductMultipleQtyService productMultipleQtyService,
+      AppBaseService appBaseService,
+      AppSaleService appSaleService,
+      AccountManagementService accountManagementService,
+      SaleOrderLineRepository saleOrderLineRepository,
+      SaleOrderRepository saleOrderRepository,
+      SaleOrderMarginService saleOrderMarginService,
+      SaleOrderComputeService saleOrderComputeService,
+      AppAccountService appAccountService,
+      AnalyticMoveLineService analyticMoveLineService) {
+    super(
+        currencyService,
+        priceListService,
+        productMultipleQtyService,
+        appBaseService,
+        appSaleService,
+        accountManagementService,
+        saleOrderLineRepository,
+        saleOrderRepository,
+        saleOrderMarginService,
+        saleOrderComputeService,
+        appAccountService,
+        analyticMoveLineService);
+  }
 
   @Transactional
   @Override
@@ -38,11 +76,11 @@ public class SaleOrderLineProjectServiceImpl extends SaleOrderLineServiceSupplyC
     if (saleOrderLineIds != null) {
 
       List<SaleOrderLine> saleOrderLineList =
-          saleOrderLineRepo.all().filter("self.id in ?1", saleOrderLineIds).fetch();
+          saleOrderLineRepository.all().filter("self.id in ?1", saleOrderLineIds).fetch();
 
       for (SaleOrderLine line : saleOrderLineList) {
         line.setProject(project);
-        saleOrderLineRepo.save(line);
+        saleOrderLineRepository.save(line);
       }
     }
   }
