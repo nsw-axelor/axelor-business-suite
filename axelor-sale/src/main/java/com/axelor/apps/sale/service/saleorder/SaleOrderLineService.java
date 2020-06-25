@@ -185,13 +185,21 @@ public interface SaleOrderLineService {
    * @return
    */
   public boolean hasEndOfPackType(List<SaleOrderLine> saleOrderLineList);
-  
+
   /**
    * Update product qty
-   * 
+   *
    * @param saleOrderLine
    * @param saleOrder
    * @param qty
    */
   public void updateProductQty(SaleOrderLine saleOrderLine, SaleOrder saleOrder, BigDecimal qty);
+
+  /**
+   * To check that Start of pack qty change or not
+   *
+   * @param saleOrderLineList
+   * @return
+   */
+  public boolean isStartOfPackQtyChange(List<SaleOrderLine> saleOrderLineList);
 }

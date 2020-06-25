@@ -37,7 +37,6 @@ import com.axelor.apps.sale.db.PackLine;
 import com.axelor.apps.sale.db.SaleOrder;
 import com.axelor.apps.sale.db.SaleOrderLine;
 import com.axelor.apps.sale.db.repo.SaleOrderLineRepository;
-import com.axelor.apps.sale.db.repo.SaleOrderRepository;
 import com.axelor.apps.sale.service.app.AppSaleService;
 import com.axelor.apps.sale.translation.ITranslation;
 import com.axelor.common.ObjectUtils;
@@ -48,7 +47,6 @@ import com.axelor.inject.Beans;
 import com.axelor.rpc.ActionResponse;
 import com.axelor.rpc.Context;
 import com.google.inject.Inject;
-import com.google.inject.persist.Transactional;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -663,9 +661,7 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
             .stream()
             .anyMatch(
                 saleOrderLine ->
-                    saleOrderLine.getTypeSelect() == SaleOrderLineRepository.TYPE_START_OF_PACK
-                        || saleOrderLine.getTypeSelect()
-                            == SaleOrderLineRepository.TYPE_END_OF_PACK);
+                    saleOrderLine.getTypeSelect() == SaleOrderLineRepository.TYPE_END_OF_PACK);
   }
 
   @Override
@@ -679,5 +675,22 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
     } catch (AxelorException e) {
       TraceBackService.trace(e);
     }
+  }
+
+  @Override
+  public boolean isStartOfPackQtyChange(List<SaleOrderLine> saleOrderLineList) {
+    return ObjectUtils.isEmpty(saleOrderLineList)
+        ? Boolean.FALSE
+        : saleOrderLineList
+            .stream()
+            .anyMatch(
+                saleOrderLine ->
+                    saleOrderLine.getTypeSelect() == SaleOrderLineRepository.TYPE_START_OF_PACK
+                        && saleOrderLine.getId() != null
+                        && saleOrderLine
+                                .getQty()
+                                .compareTo(
+                                    saleOrderLineRepository.find(saleOrderLine.getId()).getQty())
+                            != 0);
   }
 }

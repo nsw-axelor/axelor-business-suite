@@ -37,7 +37,6 @@ import com.axelor.apps.sale.db.Pack;
 import com.axelor.apps.sale.db.SaleOrder;
 import com.axelor.apps.sale.db.SaleOrderLine;
 import com.axelor.apps.sale.db.repo.PackRepository;
-import com.axelor.apps.sale.db.repo.SaleOrderLineRepository;
 import com.axelor.apps.sale.db.repo.SaleOrderRepository;
 import com.axelor.apps.sale.exception.IExceptionMessage;
 import com.axelor.apps.sale.service.app.AppSaleService;
@@ -749,14 +748,16 @@ public class SaleOrderController {
 
   public void updateProductQtyWithPackHeaderQty(ActionRequest request, ActionResponse response) {
     SaleOrder saleOrder = request.getContext().asType(SaleOrder.class);
-    if (Boolean.FALSE.equals(Beans.get(AppSaleService.class).getAppSale().getEnablePackManagement())
-        || !Beans.get(SaleOrderLineService.class)
-            .hasEndOfPackType(saleOrder.getSaleOrderLineList())) {
+    List<SaleOrderLine> saleOrderLineList = saleOrder.getSaleOrderLineList();
+    if (ObjectUtils.isEmpty(saleOrderLineList)) {
       return;
     }
-`    saleOrder  = Beans.get(SaleOrderService.class).updateProductQtyWithPackHeaderQty(saleOrder);
-    response.setValues(saleOrder);
-    Beans.get(SaleOrderRepository.class).save(saleOrder);
+    //    saleOrderLineList.sort(Comparator.comparing(SaleOrderLine::getSequence));
+    if (Boolean.FALSE.equals(Beans.get(AppSaleService.class).getAppSale().getEnablePackManagement())
+        || !Beans.get(SaleOrderLineService.class).isStartOfPackQtyChange(saleOrderLineList)) {
+      return;
+    }
+    Beans.get(SaleOrderService.class).updateProductQtyWithPackHeaderQty(saleOrder);
     response.setReload(true);
   }
 }

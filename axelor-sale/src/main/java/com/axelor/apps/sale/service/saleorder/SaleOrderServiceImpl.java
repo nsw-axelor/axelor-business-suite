@@ -38,10 +38,8 @@ import com.axelor.i18n.I18n;
 import com.axelor.inject.Beans;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
-import com.ibm.icu.text.Bidi;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.util.Comparator;
 import java.util.List;
@@ -201,12 +199,12 @@ public class SaleOrderServiceImpl implements SaleOrderService {
   @Transactional
   public SaleOrder updateProductQtyWithPackHeaderQty(SaleOrder saleOrder) {
     List<SaleOrderLine> saleOrderLineList = saleOrder.getSaleOrderLineList();
-    //saleOrder = saleOrderRepo.find(saleOrder.getId());
+    // saleOrder = saleOrderRepo.find(saleOrder.getId());
     boolean isStartOFPack = false;
     BigDecimal qtyDiff = BigDecimal.ZERO;
-    //saleOrder.getSaleOrderLineList().clear();
-    //System.err.println("List : "+saleOrder.getSaleOrderLineList()); 
-    
+    // saleOrder.getSaleOrderLineList().clear();
+    // System.err.println("List : "+saleOrder.getSaleOrderLineList());
+
     for (SaleOrderLine SOLine : saleOrderLineList) {
       if (SOLine.getTypeSelect() == SaleOrderLineRepository.TYPE_START_OF_PACK && !isStartOFPack) {
         SaleOrderLine oldSaleOrderLine = saleOrderLineRepo.find(SOLine.getId());
@@ -215,9 +213,9 @@ public class SaleOrderServiceImpl implements SaleOrderService {
         }
         qtyDiff = SOLine.getQty().subtract(oldSaleOrderLine.getQty());
         if (!qtyDiff.equals(BigDecimal.ZERO)) {
-          //oldSaleOrderLine.setQty(SOLine.getQty().setScale(appBaseService.getNbDecimalDigitForQty(), RoundingMode.HALF_EVEN));
+          // oldSaleOrderLine.setQty(SOLine.getQty().setScale(appBaseService.getNbDecimalDigitForQty(), RoundingMode.HALF_EVEN));
           isStartOFPack = true;
-//          saleOrderLineRepo.save(SOLine);
+          //          saleOrderLineRepo.save(SOLine);
         }
       } else if (isStartOFPack) {
         if (SOLine.getTypeSelect() == SaleOrderLineRepository.TYPE_END_OF_PACK) {
@@ -226,10 +224,14 @@ public class SaleOrderServiceImpl implements SaleOrderService {
         saleOrderLineService.updateProductQty(SOLine, saleOrder, SOLine.getQty().add(qtyDiff));
       }
     }
-    //saleOrder.getSaleOrderLineList().addAll(saleOrderLineList);
-    saleOrder.getSaleOrderLineList().stream().forEach(line -> {
-      System.err.println(line.getProductName() +" : "+ line.getQty()); 
-    });
+    // saleOrder.getSaleOrderLineList().addAll(saleOrderLineList);
+    saleOrder
+        .getSaleOrderLineList()
+        .stream()
+        .forEach(
+            line -> {
+              System.err.println(line.getProductName() + " : " + line.getQty());
+            });
     return saleOrder;
   }
 }

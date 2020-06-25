@@ -26,7 +26,6 @@ import com.axelor.apps.base.service.tax.FiscalPositionService;
 import com.axelor.apps.sale.db.SaleOrder;
 import com.axelor.apps.sale.db.SaleOrderLine;
 import com.axelor.apps.sale.db.repo.SaleOrderLineRepository;
-import com.axelor.apps.sale.service.app.AppSaleService;
 import com.axelor.apps.sale.service.saleorder.SaleOrderLineService;
 import com.axelor.db.mapper.Mapper;
 import com.axelor.exception.AxelorException;
@@ -318,5 +317,28 @@ public class SaleOrderLineController {
         map.getOrDefault("priceDiscounted", BigDecimal.ZERO)
                 .compareTo(saleOrder.getInAti() ? orderLine.getInTaxPrice() : orderLine.getPrice())
             == 0);
+  }
+
+  public void updateProductQtyWithPackHeaderQty(ActionRequest request, ActionResponse response) {
+    //    Context context = request.getContext();
+    //    SaleOrderLine saleOrderLine = context.asType(SaleOrderLine.class);
+    //    if
+    // (Boolean.FALSE.equals(Beans.get(AppSaleService.class).getAppSale().getEnablePackManagement())
+    //        || saleOrderLine.getTypeSelect() != SaleOrderLineRepository.TYPE_START_OF_PACK) {
+    //      return;
+    //    }
+    //    SaleOrderLineService saleOrderLineService = Beans.get(SaleOrderLineService.class);
+    //    SaleOrder saleOrder = saleOrderLineService.getSaleOrder(context);
+    ////    SaleOrderLine oldSaleOrderLine =
+    // Beans.get(SaleOrderLineRepository.class).find(saleOrderLine.getId());
+    ////    BigDecimal qtyDiff = saleOrderLine.getQty().subtract(oldSaleOrderLine.getQty());
+    ////    oldSaleOrderLine.setQty(saleOrderLine.getQty());
+    //    //saleOrderLineRepository.save(oldSaleOrderLine);
+    //
+    //    //BigDecimal diffQty =
+    // saleOrderLine.getQty().subtract(Beans.get(SaleOrderLineRepository.class).find(saleOrderLine.getId()).getQty());
+    //    //Beans.get(SaleOrderLineRepository.class).save(oldSaleOrderLine);
+    //    saleOrderLineService.updateProductQtyWithPackHeaderQty(saleOrderLine, saleOrder);
+    //    response.setReload(true);
   }
 }
