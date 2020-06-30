@@ -1,5 +1,9 @@
 # Changelog
 ## [Unreleased 5.3.8]
+## Features
+- Update pack feature in sale order.
+
+
 ## Improvements
 - ACCOUNT SITUATION : update account situation on invoice payment cancel and improve moveLine calculation
 - OPPORTUNITY: Change the data type of bestCase and worstCase fields from string to decimal.

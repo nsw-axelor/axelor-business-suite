@@ -432,4 +432,12 @@ public class InvoiceLineServiceImpl implements InvoiceLineService {
 
     return productInformation;
   }
+
+  @Override
+  public boolean hasEndOfPackType(List<InvoiceLine> invoiceLineList) {
+    return invoiceLineList
+        .stream()
+        .anyMatch(
+            invoiceLine -> invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_END_OF_PACK);
+  }
 }

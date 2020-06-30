@@ -29,6 +29,7 @@ import com.axelor.exception.AxelorException;
 import com.axelor.inject.Beans;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
+import com.google.inject.persist.Transactional;
 import java.math.BigDecimal;
 import javax.persistence.PersistenceException;
 
@@ -74,6 +75,7 @@ public class SaleOrderManagementRepository extends SaleOrderRepository {
   }
 
   @Override
+  @Transactional
   public SaleOrder save(SaleOrder saleOrder) {
     try {
       if (Beans.get(AppSaleService.class).getAppSale().getEnablePackManagement()) {
@@ -85,6 +87,9 @@ public class SaleOrderManagementRepository extends SaleOrderRepository {
       computeFullName(saleOrder);
       computeSubMargin(saleOrder);
       Beans.get(SaleOrderMarginService.class).computeMarginSaleOrder(saleOrder);
+      saleOrder.getSaleOrderLineList().stream().forEach(line -> {
+        System.err.println(line.getProductName() + " :  "  +line.getQty()); 
+      }); 
       return super.save(saleOrder);
     } catch (Exception e) {
       throw new PersistenceException(e.getLocalizedMessage());

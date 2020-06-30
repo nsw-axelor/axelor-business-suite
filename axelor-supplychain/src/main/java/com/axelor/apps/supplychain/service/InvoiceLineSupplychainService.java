@@ -177,4 +177,17 @@ public class InvoiceLineSupplychainService extends InvoiceLineServiceImpl {
     }
     invoiceLine.setBudgetDistributionSumAmount(budgetDistributionSumAmount);
   }
+
+  /**
+   * To check that invoiceLineList has "End of pack" type.
+   *
+   * @param invoiceLineList
+   * @return
+   */
+  public boolean hasEndOfPackType(List<InvoiceLine> invoiceLineList) {
+    return invoiceLineList
+        .stream()
+        .anyMatch(
+            invoiceLine -> invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_END_OF_PACK);
+  }
 }

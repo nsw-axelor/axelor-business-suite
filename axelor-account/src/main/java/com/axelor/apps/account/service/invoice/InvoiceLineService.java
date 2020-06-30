@@ -79,4 +79,12 @@ public interface InvoiceLineService {
 
   public Map<String, Object> fillPriceAndAccount(
       Invoice invoice, InvoiceLine invoiceLine, boolean isPurchase) throws AxelorException;
+
+  /**
+   * To check that invoiceLineList has "End of pack" type.
+   *
+   * @param invoiceLineList
+   * @return
+   */
+  public boolean hasEndOfPackType(List<InvoiceLine> invoiceLineList);
 }

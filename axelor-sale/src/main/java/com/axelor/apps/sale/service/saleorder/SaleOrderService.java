@@ -19,6 +19,7 @@ package com.axelor.apps.sale.service.saleorder;
 
 import com.axelor.apps.sale.db.Pack;
 import com.axelor.apps.sale.db.SaleOrder;
+import com.axelor.apps.sale.db.SaleOrderLine;
 import com.axelor.exception.AxelorException;
 import java.math.BigDecimal;
 
@@ -79,4 +80,15 @@ public interface SaleOrderService {
    * @param saleOrder
    */
   SaleOrder addPack(SaleOrder saleOrder, Pack pack, BigDecimal packQty);
+
+  /**
+   * To update product qty with pack header qty
+   *
+   * @param saleOrder
+   * @return
+   */
+  public SaleOrder updateProductQtyWithPackHeaderQty(SaleOrder saleOrder);
+
+  //public void updateProductQty(SaleOrderLine saleOrderLine, SaleOrder saleOrder, BigDecimal qty);
+
 }
