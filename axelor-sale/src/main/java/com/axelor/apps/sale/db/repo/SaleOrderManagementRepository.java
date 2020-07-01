@@ -78,6 +78,7 @@ public class SaleOrderManagementRepository extends SaleOrderRepository {
   @Transactional
   public SaleOrder save(SaleOrder saleOrder) {
     try {
+      System.err.println(saleOrder.getSaleOrderLineList() ); 
       if (Beans.get(AppSaleService.class).getAppSale().getEnablePackManagement()) {
         saleOrderComputeService.computePackTotal(saleOrder);
       } else {
@@ -87,9 +88,9 @@ public class SaleOrderManagementRepository extends SaleOrderRepository {
       computeFullName(saleOrder);
       computeSubMargin(saleOrder);
       Beans.get(SaleOrderMarginService.class).computeMarginSaleOrder(saleOrder);
-      saleOrder.getSaleOrderLineList().stream().forEach(line -> {
-        System.err.println(line.getProductName() + " :  "  +line.getQty()); 
-      }); 
+//      saleOrder.getSaleOrderLineList().stream().forEach(line -> {
+//                System.err.println(line.getProductName() + " :  " + line.getSequence() +" : " +line.getQty()); 
+//              }); 
       return super.save(saleOrder);
     } catch (Exception e) {
       throw new PersistenceException(e.getLocalizedMessage());

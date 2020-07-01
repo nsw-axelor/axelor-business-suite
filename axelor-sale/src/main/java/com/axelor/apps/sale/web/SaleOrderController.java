@@ -71,6 +71,7 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -753,11 +754,21 @@ public class SaleOrderController {
       return;
     }
     //    saleOrderLineList.sort(Comparator.comparing(SaleOrderLine::getSequence));
+//    saleOrderLineList.sort(Comparator.comparing(SaleOrderLine::getSequence));
     if (Boolean.FALSE.equals(Beans.get(AppSaleService.class).getAppSale().getEnablePackManagement())
         || !Beans.get(SaleOrderLineService.class).isStartOfPackQtyChange(saleOrderLineList)) {
       return;
     }
     Beans.get(SaleOrderService.class).updateProductQtyWithPackHeaderQty(saleOrder);
+    saleOrder
+    .getSaleOrderLineList()
+    .stream()
+    .forEach(
+        line -> {
+          System.err.println(
+              line.getProductName() + " : " + line.getSequence() + " : " + line.getQty());
+        });
+
     response.setReload(true);
   }
 }
