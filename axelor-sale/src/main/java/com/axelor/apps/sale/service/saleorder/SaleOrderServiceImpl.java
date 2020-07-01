@@ -37,16 +37,13 @@ import com.axelor.exception.db.repo.TraceBackRepository;
 import com.axelor.exception.service.TraceBackService;
 import com.axelor.i18n.I18n;
 import com.axelor.inject.Beans;
-import com.ctc.wstx.io.EBCDICCodec;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
-import groovy.xml.Entity;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import wslite.json.JSONException;
@@ -215,28 +212,27 @@ public class SaleOrderServiceImpl implements SaleOrderService {
                   line.getProductName() + " : " + line.getSequence() + " : " + line.getQty());
             });
 
-//    saleOrderLineList =
-//        saleOrderLineList
-//            .stream()
-//            .sorted(Comparator.comparing(SaleOrderLine::getSequence))
-//            .collect(Collectors.toList());
-//    saleOrderLineList
-//        .stream()
-//        .forEach(
-//            line -> {
-//              System.err.println(
-//                  line.getProductName() + " : " + line.getSequence() + " : " + line.getQty());
-//            });
+    //    saleOrderLineList =
+    //        saleOrderLineList
+    //            .stream()
+    //            .sorted(Comparator.comparing(SaleOrderLine::getSequence))
+    //            .collect(Collectors.toList());
+    //    saleOrderLineList
+    //        .stream()
+    //        .forEach(
+    //            line -> {
+    //              System.err.println(
+    //                  line.getProductName() + " : " + line.getSequence() + " : " + line.getQty());
+    //            });
 
     boolean isStartOFPack = false;
     BigDecimal qtyDiff = BigDecimal.ZERO;
     // saleOrder.getSaleOrderLineList().clear();
     // System.err.println("List : "+saleOrder.getSaleOrderLineList());
 
-    for (SaleOrderLine SOLine : saleOrderLineList) {
     this.sortSaleOrderLineList(saleOrder);
     int sequence;
-    for (SaleOrderLine SOLine :saleOrderLineList) {
+    for (SaleOrderLine SOLine : saleOrderLineList) {
       sequence = SOLine.getSequence();
       if (SOLine.getTypeSelect() == SaleOrderLineRepository.TYPE_START_OF_PACK && !isStartOFPack) {
         SaleOrderLine oldSaleOrderLine = saleOrderLineRepo.find(SOLine.getId());
@@ -247,45 +243,44 @@ public class SaleOrderServiceImpl implements SaleOrderService {
         if (!qtyDiff.equals(BigDecimal.ZERO)) {
           // oldSaleOrderLine.setQty(SOLine.getQty().setScale(appBaseService.getNbDecimalDigitForQty(), RoundingMode.HALF_EVEN));
           isStartOFPack = true;
-          //SOLine = EntityHelper.getEntity(SOLine);
-          //saleOrderLineRepo.save(SOLine);
+          // SOLine = EntityHelper.getEntity(SOLine);
+          // saleOrderLineRepo.save(SOLine);
           //          saleOrderLineRepo.save(SOLine);
         }
       } else if (isStartOFPack) {
         if (SOLine.getTypeSelect() == SaleOrderLineRepository.TYPE_END_OF_PACK) {
           break;
         }
-        //sequence = SOLine.getSequence();
+        // sequence = SOLine.getSequence();
         SOLine = saleOrderLineRepo.find(SOLine.getId());
         saleOrderLineService.updateProductQty(SOLine, saleOrder, SOLine.getQty().add(qtyDiff));
-      }else {
+      } else {
         continue;
       }
       SOLine.setSequence(sequence);
       SOLine = EntityHelper.getEntity(SOLine);
       saleOrderLineRepo.save(SOLine);
-//      SOLine = EntityHelper.getEntity(SOLine);
+      //      SOLine = EntityHelper.getEntity(SOLine);
     }
     // saleOrder.getSaleOrderLineList().addAll(saleOrderLineList);
-    saleOrder
-        .getSaleOrderLineList()
-        .stream()
-        .forEach(
-            line -> {
-              System.err.println(line.getProductName() + " : " + line.getQty());
-            });
     saleOrderLineList
         .stream()
         .forEach(
             line -> {
-              System.err.println( line.getId() + " : " +
-                  line.getProductName() + " : " + line.getSequence() + " : " + line.getQty());
+              System.err.println(
+                  line.getId()
+                      + " : "
+                      + line.getProductName()
+                      + " : "
+                      + line.getSequence()
+                      + " : "
+                      + line.getQty());
             });
-//    saleOrderLineList.stream().forEach(line -> {
-//    line = EntityHelper.getEntity(line);
-//    saleOrderLineRepo.save(line);});
-     //saleOrder = EntityHelper.getEntity(saleOrder);
-     //saleOrderRepo.save(saleOrder);
+    //    saleOrderLineList.stream().forEach(line -> {
+    //    line = EntityHelper.getEntity(line);
+    //    saleOrderLineRepo.save(line);});
+    // saleOrder = EntityHelper.getEntity(saleOrder);
+    // saleOrderRepo.save(saleOrder);
     return saleOrder;
   }
 }

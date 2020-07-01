@@ -19,7 +19,6 @@ package com.axelor.apps.sale.service.saleorder;
 
 import com.axelor.apps.sale.db.Pack;
 import com.axelor.apps.sale.db.SaleOrder;
-import com.axelor.apps.sale.db.SaleOrderLine;
 import com.axelor.exception.AxelorException;
 import java.math.BigDecimal;
 

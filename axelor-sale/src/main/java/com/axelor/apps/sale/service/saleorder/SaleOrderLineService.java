@@ -202,12 +202,4 @@ public interface SaleOrderLineService {
    * @return
    */
   public boolean isStartOfPackQtyChange(List<SaleOrderLine> saleOrderLineList);
-  
-  /**
-   * To check that Start of pack qty change or not
-   * 
-   * @param saleorderlineLitst
-   * @return 
-   */
-  public boolean isStartOfPackQtyChange(List<SaleOrderLine> saleorderlineLitst);
 }
