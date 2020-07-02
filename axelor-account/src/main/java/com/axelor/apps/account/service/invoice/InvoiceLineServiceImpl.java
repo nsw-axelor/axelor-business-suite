@@ -31,6 +31,7 @@ import com.axelor.apps.account.db.repo.InvoiceLineRepository;
 import com.axelor.apps.account.service.AccountManagementAccountService;
 import com.axelor.apps.account.service.AnalyticMoveLineService;
 import com.axelor.apps.account.service.app.AppAccountService;
+import com.axelor.apps.account.service.invoice.generator.line.InvoiceLineManagement;
 import com.axelor.apps.base.db.Company;
 import com.axelor.apps.base.db.Currency;
 import com.axelor.apps.base.db.PriceList;
@@ -43,7 +44,9 @@ import com.axelor.apps.base.service.CurrencyService;
 import com.axelor.apps.base.service.PriceListService;
 import com.axelor.apps.base.service.app.AppBaseService;
 import com.axelor.apps.base.service.tax.FiscalPositionService;
+import com.axelor.common.ObjectUtils;
 import com.axelor.exception.AxelorException;
+import com.axelor.exception.service.TraceBackService;
 import com.axelor.inject.Beans;
 import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
@@ -62,6 +65,8 @@ public class InvoiceLineServiceImpl implements InvoiceLineService {
   protected PriceListService priceListService;
   protected AppAccountService appAccountService;
   protected AnalyticMoveLineService analyticMoveLineService;
+  protected InvoiceLineRepository invoiceLineRepo;
+  protected AppBaseService appBaseService;
 
   @Inject
   public InvoiceLineServiceImpl(
@@ -69,13 +74,17 @@ public class InvoiceLineServiceImpl implements InvoiceLineService {
       PriceListService priceListService,
       AppAccountService appAccountService,
       AnalyticMoveLineService analyticMoveLineService,
-      AccountManagementAccountService accountManagementAccountService) {
+      AccountManagementAccountService accountManagementAccountService,
+      InvoiceLineRepository invoiceLineRepo,
+      AppBaseService appBaseService) {
 
     this.accountManagementAccountService = accountManagementAccountService;
     this.currencyService = currencyService;
     this.priceListService = priceListService;
     this.appAccountService = appAccountService;
     this.analyticMoveLineService = analyticMoveLineService;
+    this.invoiceLineRepo = invoiceLineRepo;
+    this.appBaseService = appBaseService;
   }
 
   public List<AnalyticMoveLine> getAndComputeAnalyticDistribution(
@@ -435,9 +444,70 @@ public class InvoiceLineServiceImpl implements InvoiceLineService {
 
   @Override
   public boolean hasEndOfPackType(List<InvoiceLine> invoiceLineList) {
-    return invoiceLineList
-        .stream()
-        .anyMatch(
-            invoiceLine -> invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_END_OF_PACK);
+    return ObjectUtils.isEmpty(invoiceLineList)
+        ? Boolean.FALSE
+        : invoiceLineList
+            .stream()
+            .anyMatch(
+                invoiceLine ->
+                    invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_END_OF_PACK);
+  }
+
+  @Override
+  public boolean isStartOfPackQtyChange(List<InvoiceLine> invoiceLineList) {
+    return ObjectUtils.isEmpty(invoiceLineList)
+        ? Boolean.FALSE
+        : invoiceLineList
+            .stream()
+            .anyMatch(
+                invoiceLine ->
+                    invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_START_OF_PACK
+                        && invoiceLine.getId() != null
+                        && invoiceLine
+                                .getQty()
+                                .compareTo(invoiceLineRepo.find(invoiceLine.getId()).getQty())
+                            != 0);
+  }
+
+  @Override
+  public InvoiceLine updateProductQty(InvoiceLine invoiceLine, Invoice invoice, BigDecimal qty) {
+    invoiceLine.setQty(qty);
+    if (invoiceLine.getTypeSelect() != InvoiceLineRepository.TYPE_NORMAL
+        || invoiceLine.getProduct() == null) {
+      return invoiceLine;
+    }
+    try {
+      BigDecimal exTaxTotal;
+      BigDecimal inTaxTotal;
+      BigDecimal taxRate = BigDecimal.ZERO;
+
+      BigDecimal priceDiscounted = this.computeDiscount(invoiceLine, invoice.getInAti());
+
+      if (invoiceLine.getTaxLine() != null) {
+        taxRate = invoiceLine.getTaxLine().getValue();
+      }
+      if (Boolean.FALSE.equals(invoice.getInAti())) {
+        exTaxTotal = InvoiceLineManagement.computeAmount(qty, priceDiscounted);
+        inTaxTotal = exTaxTotal.add(exTaxTotal.multiply(taxRate));
+      } else {
+        inTaxTotal = InvoiceLineManagement.computeAmount(qty, priceDiscounted);
+        exTaxTotal = inTaxTotal.divide(taxRate.add(BigDecimal.ONE), 2, BigDecimal.ROUND_HALF_UP);
+      }
+
+      invoiceLine.setExTaxTotal(exTaxTotal);
+      invoiceLine.setCompanyExTaxTotal(this.getCompanyExTaxTotal(exTaxTotal, invoice));
+      invoiceLine.setInTaxTotal(inTaxTotal);
+      invoiceLine.setCompanyInTaxTotal(this.getCompanyExTaxTotal(inTaxTotal, invoice));
+      invoiceLine.setPriceDiscounted(priceDiscounted);
+      invoiceLine.setTaxRate(taxRate);
+
+      //      if
+      // (Boolean.TRUE.equals(appAccountService.getAppAccount().getManageAnalyticAccounting())) {
+      //        invoiceLine.setAnalyticMoveLineList(this.computeAnalyticDistribution(invoiceLine));
+      //      }
+    } catch (Exception e) {
+      TraceBackService.trace(e);
+    }
+    return invoiceLine;
   }
 }

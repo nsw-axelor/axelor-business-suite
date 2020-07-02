@@ -27,9 +27,11 @@ import com.axelor.apps.sale.db.SaleOrder;
 import com.axelor.apps.sale.db.SaleOrderLine;
 import com.axelor.apps.sale.db.repo.SaleOrderLineRepository;
 import com.axelor.apps.sale.service.saleorder.SaleOrderLineService;
+import com.axelor.apps.sale.translation.ITranslation;
 import com.axelor.db.mapper.Mapper;
 import com.axelor.exception.AxelorException;
 import com.axelor.exception.service.TraceBackService;
+import com.axelor.i18n.I18n;
 import com.axelor.inject.Beans;
 import com.axelor.rpc.ActionRequest;
 import com.axelor.rpc.ActionResponse;
@@ -288,6 +290,9 @@ public class SaleOrderLineController {
       newSaleOrderLine.put("id", saleOrderLine.getId());
       newSaleOrderLine.put("version", saleOrderLine.getVersion());
       newSaleOrderLine.put("typeSelect", saleOrderLine.getTypeSelect());
+      if (saleOrderLine.getTypeSelect() == SaleOrderLineRepository.TYPE_END_OF_PACK) {
+        newSaleOrderLine.put("productName", I18n.get(ITranslation.SALE_ORDER_LINE_END_OF_PACK));
+      }
       response.setValues(newSaleOrderLine);
     }
   }
@@ -317,28 +322,5 @@ public class SaleOrderLineController {
         map.getOrDefault("priceDiscounted", BigDecimal.ZERO)
                 .compareTo(saleOrder.getInAti() ? orderLine.getInTaxPrice() : orderLine.getPrice())
             == 0);
-  }
-
-  public void updateProductQtyWithPackHeaderQty(ActionRequest request, ActionResponse response) {
-    //    Context context = request.getContext();
-    //    SaleOrderLine saleOrderLine = context.asType(SaleOrderLine.class);
-    //    if
-    // (Boolean.FALSE.equals(Beans.get(AppSaleService.class).getAppSale().getEnablePackManagement())
-    //        || saleOrderLine.getTypeSelect() != SaleOrderLineRepository.TYPE_START_OF_PACK) {
-    //      return;
-    //    }
-    //    SaleOrderLineService saleOrderLineService = Beans.get(SaleOrderLineService.class);
-    //    SaleOrder saleOrder = saleOrderLineService.getSaleOrder(context);
-    ////    SaleOrderLine oldSaleOrderLine =
-    // Beans.get(SaleOrderLineRepository.class).find(saleOrderLine.getId());
-    ////    BigDecimal qtyDiff = saleOrderLine.getQty().subtract(oldSaleOrderLine.getQty());
-    ////    oldSaleOrderLine.setQty(saleOrderLine.getQty());
-    //    //saleOrderLineRepository.save(oldSaleOrderLine);
-    //
-    //    //BigDecimal diffQty =
-    // saleOrderLine.getQty().subtract(Beans.get(SaleOrderLineRepository.class).find(saleOrderLine.getId()).getQty());
-    //    //Beans.get(SaleOrderLineRepository.class).save(oldSaleOrderLine);
-    //    saleOrderLineService.updateProductQtyWithPackHeaderQty(saleOrderLine, saleOrder);
-    //    response.setReload(true);
   }
 }

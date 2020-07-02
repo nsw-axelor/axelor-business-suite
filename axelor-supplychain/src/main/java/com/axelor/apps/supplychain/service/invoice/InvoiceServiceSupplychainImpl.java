@@ -33,19 +33,22 @@ import com.axelor.apps.base.db.Company;
 import com.axelor.apps.base.db.Currency;
 import com.axelor.apps.base.service.PartnerService;
 import com.axelor.apps.base.service.alarm.AlarmEngineService;
+import com.axelor.apps.base.service.app.AppBaseService;
 import com.axelor.apps.sale.db.AdvancePayment;
 import com.axelor.apps.sale.db.SaleOrder;
 import com.axelor.apps.supplychain.db.Timetable;
 import com.axelor.apps.supplychain.db.repo.TimetableRepository;
-import com.axelor.apps.supplychain.service.InvoiceLineSupplychainService;
 import com.axelor.apps.supplychain.service.app.AppSupplychainService;
 import com.axelor.common.ObjectUtils;
+import com.axelor.db.EntityHelper;
 import com.axelor.db.Query;
+import com.axelor.db.mapper.Mapper;
 import com.axelor.exception.AxelorException;
 import com.axelor.inject.Beans;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -57,7 +60,8 @@ import java.util.stream.Collectors;
 public class InvoiceServiceSupplychainImpl extends InvoiceServiceImpl
     implements InvoiceServiceSupplychain {
 
-  protected InvoiceLineSupplychainService invoiceLineSupplychainService;
+  protected InvoiceLineRepository invoiceLineRepo;
+  protected AppBaseService appBaseService;
 
   @Inject
   public InvoiceServiceSupplychainImpl(
@@ -70,7 +74,8 @@ public class InvoiceServiceSupplychainImpl extends InvoiceServiceImpl
       PartnerService partnerService,
       InvoiceLineService invoiceLineService,
       AccountConfigService accountConfigService,
-      InvoiceLineSupplychainService invoiceLineSupplychainService) {
+      InvoiceLineRepository invoiceLineRepo,
+      AppBaseService appBaseService) {
     super(
         validateFactory,
         ventilateFactory,
@@ -81,7 +86,8 @@ public class InvoiceServiceSupplychainImpl extends InvoiceServiceImpl
         partnerService,
         invoiceLineService,
         accountConfigService);
-    this.invoiceLineSupplychainService = invoiceLineSupplychainService;
+    this.invoiceLineRepo = invoiceLineRepo;
+    this.appBaseService = appBaseService;
   }
 
   @Override
@@ -188,8 +194,7 @@ public class InvoiceServiceSupplychainImpl extends InvoiceServiceImpl
   public void computePackTotal(Invoice invoice) {
     List<InvoiceLine> invoiceLineList = invoice.getInvoiceLineList();
 
-    if (ObjectUtils.isEmpty((invoiceLineList))
-        || !invoiceLineSupplychainService.hasEndOfPackType(invoiceLineList)) {
+    if (!invoiceLineService.hasEndOfPackType(invoiceLineList)) {
       return;
     }
     invoiceLineList.sort(Comparator.comparing(InvoiceLine::getSequence));
@@ -238,5 +243,37 @@ public class InvoiceServiceSupplychainImpl extends InvoiceServiceImpl
               });
       invoice.setInvoiceLineList(invoiceLineList);
     }
+  }
+
+  @Override
+  @Transactional
+  public Invoice updateProductQtyWithPackHeaderQty(Invoice invoice) {
+    List<InvoiceLine> invoiceLineList = invoice.getInvoiceLineList();
+    boolean isStartOFPack = false;
+    BigDecimal qtyDiff = BigDecimal.ZERO;
+    int scale = appBaseService.getNbDecimalDigitForQty();
+    invoiceLineList.sort(Comparator.comparing(InvoiceLine::getSequence));
+    for (InvoiceLine invoiceLine : invoiceLineList) {
+
+      if (invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_START_OF_PACK
+          && !isStartOFPack) {
+        InvoiceLine previousInvoiceLine = invoiceLineRepo.find(invoiceLine.getId());
+        qtyDiff = invoiceLine.getQty().subtract(previousInvoiceLine.getQty());
+        if (!qtyDiff.equals(BigDecimal.ZERO)) {
+          isStartOFPack = true;
+          previousInvoiceLine.setQty(invoiceLine.getQty().setScale(scale, RoundingMode.HALF_EVEN));
+          invoiceLineRepo.save(previousInvoiceLine);
+        }
+      } else if (isStartOFPack) {
+        if (invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_END_OF_PACK) {
+          break;
+        }
+        invoiceLineService.updateProductQty(
+            invoiceLine,
+            invoice,
+            invoiceLine.getQty().add(qtyDiff).setScale(scale, RoundingMode.HALF_EVEN));
+      }
+    }
+    return invoice;
   }
 }

@@ -192,6 +192,7 @@ public interface SaleOrderLineService {
    * @param saleOrderLine
    * @param saleOrder
    * @param qty
+   * @return
    */
   public void updateProductQty(SaleOrderLine saleOrderLine, SaleOrder saleOrder, BigDecimal qty);
 

@@ -79,7 +79,6 @@
 			<field name="productName" colSpan="9" title="Title"/>
 			<field name="typeSelect" requiredIf="typeSelect != 0" colSpan="3" onChange="action-sale-order-line-method-empty-line"/>
             <field name="qty" />
-<!--             onChange="action-sale-order-line-method-update-product-qty-with-pack-header-qty" -->
 			<field name="isShowTotal" colSpan="3" if="__config__.app.getApp('sale')?.enablePackManagement" showIf="typeSelect == 3"/>
 			<field name="isHideUnitAmounts" colSpan="3" if="__config__.app.getApp('sale')?.enablePackManagement" showIf="typeSelect == 3"/>
 		</panel>
@@ -349,10 +348,6 @@
 	<action-method name="action-sale-order-line-method-check-stock" if-module="axelor-supplychain">
 		<call class="com.axelor.apps.supplychain.web.SaleOrderLineController" method="checkStocks"/>
 	</action-method>
-  
-    <action-method name="action-sale-order-line-method-update-product-qty-with-pack-header-qty">
-       <call method="updateProductQtyWithPackHeaderQty" class="com.axelor.apps.sale.web.SaleOrderLineController"/>
-    </action-method>
 
 	<action-attrs name="action-sale-order-line-attrs-read-only-distribution-lines">
 		<attribute name="readonly" for="analyticMoveLineList" expr="eval: !__config__.app.isApp('account')  || __config__.app.getApp('account').getAnalyticDistributionTypeSelect() != 1"/>

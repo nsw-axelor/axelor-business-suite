@@ -30,6 +30,7 @@ import com.axelor.apps.base.db.Product;
 import com.axelor.apps.base.db.Unit;
 import com.axelor.apps.base.service.CurrencyService;
 import com.axelor.apps.base.service.PriceListService;
+import com.axelor.apps.base.service.app.AppBaseService;
 import com.axelor.apps.purchase.db.PurchaseOrderLine;
 import com.axelor.apps.purchase.service.PurchaseProductService;
 import com.axelor.apps.purchase.service.SupplierCatalogService;
@@ -56,14 +57,17 @@ public class InvoiceLineSupplychainService extends InvoiceLineServiceImpl {
       AppAccountService appAccountService,
       AnalyticMoveLineService analyticMoveLineService,
       AccountManagementAccountService accountManagementAccountService,
-      PurchaseProductService purchaseProductService) {
-
+      PurchaseProductService purchaseProductService,
+      InvoiceLineRepository invoiceLineRepo,
+      AppBaseService appBaseService) {
     super(
         currencyService,
         priceListService,
         appAccountService,
         analyticMoveLineService,
-        accountManagementAccountService);
+        accountManagementAccountService,
+        invoiceLineRepo,
+        appBaseService);
     this.purchaseProductService = purchaseProductService;
   }
 
@@ -176,18 +180,5 @@ public class InvoiceLineSupplychainService extends InvoiceLineServiceImpl {
       }
     }
     invoiceLine.setBudgetDistributionSumAmount(budgetDistributionSumAmount);
-  }
-
-  /**
-   * To check that invoiceLineList has "End of pack" type.
-   *
-   * @param invoiceLineList
-   * @return
-   */
-  public boolean hasEndOfPackType(List<InvoiceLine> invoiceLineList) {
-    return invoiceLineList
-        .stream()
-        .anyMatch(
-            invoiceLine -> invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_END_OF_PACK);
   }
 }

@@ -200,87 +200,26 @@ public class SaleOrderServiceImpl implements SaleOrderService {
   @Transactional
   public SaleOrder updateProductQtyWithPackHeaderQty(SaleOrder saleOrder) {
     List<SaleOrderLine> saleOrderLineList = saleOrder.getSaleOrderLineList();
-    // saleOrder = saleOrderRepo.find(saleOrder.getId());
-    // saleOrderLineList.sort(Comparator.comparing(SaleOrderLine::getSequence));
-    // saleOrder = saleOrderRepo.find(saleOrder.getId());
-    saleOrder
-        .getSaleOrderLineList()
-        .stream()
-        .forEach(
-            line -> {
-              System.err.println(
-                  line.getProductName() + " : " + line.getSequence() + " : " + line.getQty());
-            });
-
-    //    saleOrderLineList =
-    //        saleOrderLineList
-    //            .stream()
-    //            .sorted(Comparator.comparing(SaleOrderLine::getSequence))
-    //            .collect(Collectors.toList());
-    //    saleOrderLineList
-    //        .stream()
-    //        .forEach(
-    //            line -> {
-    //              System.err.println(
-    //                  line.getProductName() + " : " + line.getSequence() + " : " + line.getQty());
-    //            });
-
     boolean isStartOFPack = false;
     BigDecimal qtyDiff = BigDecimal.ZERO;
-    // saleOrder.getSaleOrderLineList().clear();
-    // System.err.println("List : "+saleOrder.getSaleOrderLineList());
-
     this.sortSaleOrderLineList(saleOrder);
-    int sequence;
+
     for (SaleOrderLine SOLine : saleOrderLineList) {
-      sequence = SOLine.getSequence();
+
       if (SOLine.getTypeSelect() == SaleOrderLineRepository.TYPE_START_OF_PACK && !isStartOFPack) {
-        SaleOrderLine oldSaleOrderLine = saleOrderLineRepo.find(SOLine.getId());
-        if (ObjectUtils.isEmpty(oldSaleOrderLine)) {
-          return saleOrder;
-        }
-        qtyDiff = SOLine.getQty().subtract(oldSaleOrderLine.getQty());
+        qtyDiff = SOLine.getQty().subtract(saleOrderLineRepo.find(SOLine.getId()).getQty());
         if (!qtyDiff.equals(BigDecimal.ZERO)) {
-          // oldSaleOrderLine.setQty(SOLine.getQty().setScale(appBaseService.getNbDecimalDigitForQty(), RoundingMode.HALF_EVEN));
           isStartOFPack = true;
-          // SOLine = EntityHelper.getEntity(SOLine);
-          // saleOrderLineRepo.save(SOLine);
-          //          saleOrderLineRepo.save(SOLine);
+          SOLine = EntityHelper.getEntity(SOLine);
+          saleOrderLineRepo.save(SOLine);
         }
       } else if (isStartOFPack) {
         if (SOLine.getTypeSelect() == SaleOrderLineRepository.TYPE_END_OF_PACK) {
           break;
         }
-        // sequence = SOLine.getSequence();
-        SOLine = saleOrderLineRepo.find(SOLine.getId());
         saleOrderLineService.updateProductQty(SOLine, saleOrder, SOLine.getQty().add(qtyDiff));
-      } else {
-        continue;
       }
-      SOLine.setSequence(sequence);
-      SOLine = EntityHelper.getEntity(SOLine);
-      saleOrderLineRepo.save(SOLine);
-      //      SOLine = EntityHelper.getEntity(SOLine);
     }
-    // saleOrder.getSaleOrderLineList().addAll(saleOrderLineList);
-    saleOrderLineList
-        .stream()
-        .forEach(
-            line -> {
-              System.err.println(
-                  line.getId()
-                      + " : "
-                      + line.getProductName()
-                      + " : "
-                      + line.getSequence()
-                      + " : "
-                      + line.getQty());
-            });
-    //    saleOrderLineList.stream().forEach(line -> {
-    //    line = EntityHelper.getEntity(line);
-    //    saleOrderLineRepo.save(line);});
-    // saleOrder = EntityHelper.getEntity(saleOrder);
-    // saleOrderRepo.save(saleOrder);
     return saleOrder;
   }
 }

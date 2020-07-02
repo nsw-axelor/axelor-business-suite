@@ -972,7 +972,7 @@
     </action-group>
 
     <action-group name="action-sale-order-line-change-group">
-        <action name="action-sale-order-method-update-product-qty-with-pack-header-qty" />
+        <action name="action-sale-order-method-update-product-qty-with-pack-header-qty" if="saleOrderLineList.find{it->it.typeSelect == 2} != null"/>
     	<action name="action-sale-order-method-compute"/>
     	<action name="action-sale-order-method-compute-margin"/>
     	<action name="action-sale-order-record-set-advance-payment" if="__config__.app.getApp('supplychain')?.manageAdvancePaymentsFromPaymentConditions"/>

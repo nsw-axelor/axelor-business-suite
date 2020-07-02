@@ -19,6 +19,7 @@ package com.axelor.apps.businessproject.service;
 
 import com.axelor.apps.ReportFactory;
 import com.axelor.apps.account.db.Invoice;
+import com.axelor.apps.account.db.repo.InvoiceLineRepository;
 import com.axelor.apps.account.db.repo.InvoiceRepository;
 import com.axelor.apps.account.exception.IExceptionMessage;
 import com.axelor.apps.account.service.app.AppAccountService;
@@ -29,9 +30,9 @@ import com.axelor.apps.account.service.invoice.factory.ValidateFactory;
 import com.axelor.apps.account.service.invoice.factory.VentilateFactory;
 import com.axelor.apps.base.service.PartnerService;
 import com.axelor.apps.base.service.alarm.AlarmEngineService;
+import com.axelor.apps.base.service.app.AppBaseService;
 import com.axelor.apps.businessproject.report.IReport;
 import com.axelor.apps.report.engine.ReportSettings;
-import com.axelor.apps.supplychain.service.InvoiceLineSupplychainService;
 import com.axelor.apps.supplychain.service.invoice.InvoiceServiceSupplychainImpl;
 import com.axelor.auth.AuthUtils;
 import com.axelor.exception.AxelorException;
@@ -54,7 +55,8 @@ public class InvoiceServiceProjectImpl extends InvoiceServiceSupplychainImpl {
       PartnerService partnerService,
       InvoiceLineService invoiceLineService,
       AccountConfigService accountConfigService,
-      InvoiceLineSupplychainService invoiceLineSupplychainService) {
+      InvoiceLineRepository invoiceLineRepo,
+      AppBaseService appBaseService) {
     super(
         validateFactory,
         ventilateFactory,
@@ -65,7 +67,8 @@ public class InvoiceServiceProjectImpl extends InvoiceServiceSupplychainImpl {
         partnerService,
         invoiceLineService,
         accountConfigService,
-        invoiceLineSupplychainService);
+        invoiceLineRepo,
+        appBaseService);
   }
 
   public List<String> editInvoiceAnnex(Invoice invoice, String invoiceIds, boolean toAttach)

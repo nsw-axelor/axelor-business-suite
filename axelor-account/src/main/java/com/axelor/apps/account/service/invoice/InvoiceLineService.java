@@ -87,4 +87,22 @@ public interface InvoiceLineService {
    * @return
    */
   public boolean hasEndOfPackType(List<InvoiceLine> invoiceLineList);
+
+  /**
+   * To check that Start of pack qty change or not
+   *
+   * @param invoiceLineList
+   * @return
+   */
+  public boolean isStartOfPackQtyChange(List<InvoiceLine> invoiceLineList);
+
+  /**
+   * Update product qty
+   *
+   * @param invoiceLine
+   * @param invoice
+   * @param qty
+   * @return
+   */
+  public InvoiceLine updateProductQty(InvoiceLine invoiceLine, Invoice invoice, BigDecimal qty);
 }

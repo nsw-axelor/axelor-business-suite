@@ -34,4 +34,12 @@ public interface InvoiceServiceSupplychain {
    * @param invoice
    */
   public void resetPackTotal(Invoice invoice);
+
+  /**
+   * To update product qty with pack header qty
+   *
+   * @param invoice
+   * @return
+   */
+  public Invoice updateProductQtyWithPackHeaderQty(Invoice invoice);
 }

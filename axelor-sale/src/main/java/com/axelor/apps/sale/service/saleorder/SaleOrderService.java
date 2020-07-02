@@ -87,7 +87,4 @@ public interface SaleOrderService {
    * @return
    */
   public SaleOrder updateProductQtyWithPackHeaderQty(SaleOrder saleOrder);
-
-  // public void updateProductQty(SaleOrderLine saleOrderLine, SaleOrder saleOrder, BigDecimal qty);
-
 }

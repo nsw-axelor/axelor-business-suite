@@ -669,6 +669,9 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
 
     saleOrderLine.setQty(
         qty.setScale(appBaseService.getNbDecimalDigitForQty(), RoundingMode.HALF_EVEN));
+    if (saleOrderLine.getTypeSelect() != SaleOrderLineRepository.TYPE_NORMAL) {
+      return;
+    }
     try {
       this.fillPrice(saleOrderLine, saleOrder);
       this.computeValues(saleOrder, saleOrderLine);
