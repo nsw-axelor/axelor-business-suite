@@ -501,12 +501,16 @@ public class InvoiceLineServiceImpl implements InvoiceLineService {
       invoiceLine.setPriceDiscounted(priceDiscounted);
       invoiceLine.setTaxRate(taxRate);
 
-      //      if
-      // (Boolean.TRUE.equals(appAccountService.getAppAccount().getManageAnalyticAccounting())) {
-      //        invoiceLine.setAnalyticMoveLineList(this.computeAnalyticDistribution(invoiceLine));
-      //      }
     } catch (Exception e) {
       TraceBackService.trace(e);
+    }
+    return this.computeAnalyticDistributionWithUpdateQty(invoiceLine);
+  }
+
+  public InvoiceLine computeAnalyticDistributionWithUpdateQty(InvoiceLine invoiceLine) {
+
+    if (Boolean.FALSE.equals(appAccountService.getAppAccount().getManageAnalyticAccounting())) {
+      invoiceLine.setAnalyticMoveLineList(this.computeAnalyticDistribution(invoiceLine));
     }
     return invoiceLine;
   }

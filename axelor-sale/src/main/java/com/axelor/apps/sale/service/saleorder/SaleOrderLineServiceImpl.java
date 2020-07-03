@@ -66,7 +66,7 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
   protected AppBaseService appBaseService;
   protected AppSaleService appSaleService;
   protected AccountManagementService accountManagementService;
-  protected SaleOrderLineRepository saleOrderLineRepository;
+  protected SaleOrderLineRepository saleOrderLineRepo;
 
   @Inject
   public SaleOrderLineServiceImpl(
@@ -76,14 +76,14 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
       AppBaseService appBaseService,
       AppSaleService appSaleService,
       AccountManagementService accountManagementService,
-      SaleOrderLineRepository saleOrderLineRepository) {
+      SaleOrderLineRepository saleOrderLineRepo) {
     this.currencyService = currencyService;
     this.priceListService = priceListService;
     this.productMultipleQtyService = productMultipleQtyService;
     this.appBaseService = appBaseService;
     this.appSaleService = appSaleService;
     this.accountManagementService = accountManagementService;
-    this.saleOrderLineRepository = saleOrderLineRepository;
+    this.saleOrderLineRepo = saleOrderLineRepo;
   }
 
   @Override
@@ -593,8 +593,6 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
       if (packLine.getPrice() != null) {
         soLine.setPrice(packLine.getPrice().multiply(conversionRate));
       }
-      soLine.setIsShowTotal(packLine.getIsShowTotal());
-      soLine.setIsHideUnitAmounts(packLine.getIsHideUnitAmounts());
 
       if (product != null) {
         if (appSaleService.getAppSale().getIsEnabledProductDescriptionCopy()) {
@@ -692,8 +690,7 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
                         && saleOrderLine.getId() != null
                         && saleOrderLine
                                 .getQty()
-                                .compareTo(
-                                    saleOrderLineRepository.find(saleOrderLine.getId()).getQty())
+                                .compareTo(saleOrderLineRepo.find(saleOrderLine.getId()).getQty())
                             != 0);
   }
 }

@@ -226,7 +226,7 @@ public class SaleOrderComputeServiceImpl implements SaleOrderComputeService {
   @Override
   public void resetPackTotal(SaleOrder saleOrder) {
     List<SaleOrderLine> saleOrderLineList = saleOrder.getSaleOrderLineList();
-    if (ObjectUtils.notEmpty(saleOrderLineList)) {
+    if (ObjectUtils.isEmpty(saleOrderLineList)) {
       return;
     }
     for (SaleOrderLine saleOrderLine : saleOrderLineList) {

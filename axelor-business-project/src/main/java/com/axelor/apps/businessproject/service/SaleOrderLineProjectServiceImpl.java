@@ -45,7 +45,7 @@ public class SaleOrderLineProjectServiceImpl extends SaleOrderLineServiceSupplyC
       AppBaseService appBaseService,
       AppSaleService appSaleService,
       AccountManagementService accountManagementService,
-      SaleOrderLineRepository saleOrderLineRepository,
+      SaleOrderLineRepository saleOrderLineRepo,
       AppAccountService appAccountService,
       AnalyticMoveLineService analyticMoveLineService) {
     super(
@@ -55,7 +55,7 @@ public class SaleOrderLineProjectServiceImpl extends SaleOrderLineServiceSupplyC
         appBaseService,
         appSaleService,
         accountManagementService,
-        saleOrderLineRepository,
+        saleOrderLineRepo,
         appAccountService,
         analyticMoveLineService);
   }
@@ -67,11 +67,11 @@ public class SaleOrderLineProjectServiceImpl extends SaleOrderLineServiceSupplyC
     if (saleOrderLineIds != null) {
 
       List<SaleOrderLine> saleOrderLineList =
-          saleOrderLineRepository.all().filter("self.id in ?1", saleOrderLineIds).fetch();
+          saleOrderLineRepo.all().filter("self.id in ?1", saleOrderLineIds).fetch();
 
       for (SaleOrderLine line : saleOrderLineList) {
         line.setProject(project);
-        saleOrderLineRepository.save(line);
+        saleOrderLineRepo.save(line);
       }
     }
   }

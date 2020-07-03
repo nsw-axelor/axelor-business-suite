@@ -75,7 +75,7 @@ public class SaleOrderLineServiceSupplyChainImpl extends SaleOrderLineServiceImp
       AppBaseService appBaseService,
       AppSaleService appSaleService,
       AccountManagementService accountManagementService,
-      SaleOrderLineRepository saleOrderLineRepository,
+      SaleOrderLineRepository saleOrderLineRepo,
       AppAccountService appAccountService,
       AnalyticMoveLineService analyticMoveLineService) {
     super(
@@ -85,7 +85,7 @@ public class SaleOrderLineServiceSupplyChainImpl extends SaleOrderLineServiceImp
         appBaseService,
         appSaleService,
         accountManagementService,
-        saleOrderLineRepository);
+        saleOrderLineRepo);
     this.appAccountService = appAccountService;
     this.analyticMoveLineService = analyticMoveLineService;
   }

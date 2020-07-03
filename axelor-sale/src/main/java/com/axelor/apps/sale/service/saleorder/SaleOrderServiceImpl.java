@@ -52,12 +52,27 @@ public class SaleOrderServiceImpl implements SaleOrderService {
 
   private final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  @Inject private SaleOrderLineService saleOrderLineService;
-  @Inject protected AppBaseService appBaseService;
-  @Inject protected SaleOrderLineRepository saleOrderLineRepo;
-  @Inject protected SaleOrderRepository saleOrderRepo;
-  @Inject protected SaleOrderComputeService saleOrderComputeService;
-  @Inject protected SaleOrderMarginService saleOrderMarginService;
+  private SaleOrderLineService saleOrderLineService;
+  protected AppBaseService appBaseService;
+  protected SaleOrderLineRepository saleOrderLineRepo;
+  protected SaleOrderRepository saleOrderRepo;
+  protected SaleOrderComputeService saleOrderComputeService;
+  protected SaleOrderMarginService saleOrderMarginService;
+
+  @Inject
+  public SaleOrderServiceImpl(
+      SaleOrderLineService saleOrderLineService,
+      AppBaseService appBaseService,
+      SaleOrderLineRepository saleOrderLineRepo,
+      SaleOrderRepository saleOrderRepo,
+      SaleOrderComputeService saleOrderComputeService,
+      SaleOrderMarginService saleOrderMarginService) {
+    this.appBaseService = appBaseService;
+    this.saleOrderLineRepo = saleOrderLineRepo;
+    this.saleOrderRepo = saleOrderRepo;
+    this.saleOrderComputeService = saleOrderComputeService;
+    this.saleOrderMarginService = saleOrderMarginService;
+  }
 
   @Override
   public String getFileName(SaleOrder saleOrder) {

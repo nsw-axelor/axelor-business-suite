@@ -20,6 +20,7 @@ package com.axelor.apps.supplychain.service;
 import com.axelor.apps.account.db.Invoice;
 import com.axelor.apps.account.db.repo.InvoiceRepository;
 import com.axelor.apps.account.service.invoice.InvoiceToolService;
+import com.axelor.apps.purchase.db.PurchaseOrder;
 import com.axelor.apps.sale.db.SaleOrder;
 import com.axelor.apps.sale.db.repo.SaleOrderRepository;
 import com.axelor.apps.supplychain.db.Timetable;
@@ -56,7 +57,7 @@ public class TimetableServiceImpl implements TimetableService {
   @Override
   public Invoice createInvoice(Timetable timetable) throws AxelorException {
     SaleOrder saleOrder = timetable.getSaleOrder();
-    // PurchaseOrder purchaseOrder = timetable.getPurchaseOrder();
+    PurchaseOrder purchaseOrder = timetable.getPurchaseOrder();
 
     if (saleOrder != null) {
       if (saleOrder.getCurrency() == null) {
@@ -80,7 +81,6 @@ public class TimetableServiceImpl implements TimetableService {
       return invoice;
     }
 
-    /*
     if (purchaseOrder != null) {
       if (purchaseOrder.getCurrency() == null) {
         throw new AxelorException(
@@ -94,7 +94,6 @@ public class TimetableServiceImpl implements TimetableService {
       return Beans.get(PurchaseOrderInvoiceServiceImpl.class)
           .generateInvoiceFromTimetableForPurchaseOrder(purchaseOrder, timetableId);
     }
-    */
 
     return null;
   }

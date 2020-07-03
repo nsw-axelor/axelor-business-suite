@@ -40,9 +40,7 @@ import com.axelor.apps.supplychain.db.Timetable;
 import com.axelor.apps.supplychain.db.repo.TimetableRepository;
 import com.axelor.apps.supplychain.service.app.AppSupplychainService;
 import com.axelor.common.ObjectUtils;
-import com.axelor.db.EntityHelper;
 import com.axelor.db.Query;
-import com.axelor.db.mapper.Mapper;
 import com.axelor.exception.AxelorException;
 import com.axelor.inject.Beans;
 import com.google.inject.Inject;
@@ -229,20 +227,21 @@ public class InvoiceServiceSupplychainImpl extends InvoiceServiceImpl
   @Override
   public void resetPackTotal(Invoice invoice) {
     List<InvoiceLine> invoiceLineList = invoice.getInvoiceLineList();
-    if (ObjectUtils.notEmpty(invoiceLineList)) {
-      invoiceLineList
-          .stream()
-          .filter(
-              invoiceLine -> invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_END_OF_PACK)
-          .forEach(
-              invoiceLine -> {
-                invoiceLine.setIsHideUnitAmounts(Boolean.FALSE);
-                invoiceLine.setIsShowTotal(Boolean.FALSE);
-                invoiceLine.setExTaxTotal(BigDecimal.ZERO);
-                invoiceLine.setInTaxTotal(BigDecimal.ZERO);
-              });
-      invoice.setInvoiceLineList(invoiceLineList);
+    if (ObjectUtils.isEmpty(invoiceLineList)) {
+      return;
     }
+    invoiceLineList
+        .stream()
+        .filter(
+            invoiceLine -> invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_END_OF_PACK)
+        .forEach(
+            invoiceLine -> {
+              invoiceLine.setIsHideUnitAmounts(Boolean.FALSE);
+              invoiceLine.setIsShowTotal(Boolean.FALSE);
+              invoiceLine.setExTaxTotal(BigDecimal.ZERO);
+              invoiceLine.setInTaxTotal(BigDecimal.ZERO);
+            });
+    invoice.setInvoiceLineList(invoiceLineList);
   }
 
   @Override
