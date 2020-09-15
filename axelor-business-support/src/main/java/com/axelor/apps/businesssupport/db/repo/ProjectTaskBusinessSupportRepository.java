@@ -15,23 +15,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.axelor.apps.base.service;
+package com.axelor.apps.businesssupport.db.repo;
 
-import com.axelor.apps.base.db.Frequency;
-import com.axelor.team.db.TeamTask;
+import com.axelor.apps.businessproject.db.repo.ProjectTaskBusinessProjectRepository;
+import com.axelor.apps.project.db.ProjectTask;
 
-public interface TeamTaskService {
+public class ProjectTaskBusinessSupportRepository extends ProjectTaskBusinessProjectRepository {
 
-  /** Generates reccurent tasks from given {@link TeamTask} and {@link Frequency} */
-  void generateTasks(TeamTask teamTask, Frequency frequency);
-
-  /**
-   * Updates fields of next task of given {@link TeamTask}, recursively.
-   *
-   * <p>This method DOES NOT update potential parent.
-   */
-  void updateNextTask(TeamTask teamTask);
-
-  /** Removes all next tasks of given {@link TeamTask}. */
-  void removeNextTasks(TeamTask teamTask);
+  @Override
+  public ProjectTask copy(ProjectTask entity, boolean deep) {
+    ProjectTask task = super.copy(entity, deep);
+    task.setTargetVersion(null);
+    return task;
+  }
 }

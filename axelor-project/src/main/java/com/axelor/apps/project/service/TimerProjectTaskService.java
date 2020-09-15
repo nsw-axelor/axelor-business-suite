@@ -15,18 +15,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.axelor.apps.businessproject.db.repo;
+package com.axelor.apps.project.service;
 
-import com.axelor.apps.hr.db.repo.TeamTaskHRRepository;
-import com.axelor.team.db.TeamTask;
+import com.axelor.apps.base.db.Timer;
+import com.axelor.apps.base.db.TimerHistory;
+import com.axelor.apps.project.db.ProjectTask;
+import com.axelor.exception.AxelorException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
-public class TeamTaskBusinessProjectRepository extends TeamTaskHRRepository {
+public interface TimerProjectTaskService {
 
-  @Override
-  public TeamTask copy(TeamTask entity, boolean deep) {
-    TeamTask task = super.copy(entity, deep);
-    task.setSaleOrderLine(null);
-    task.setInvoiceLine(null);
-    return task;
-  }
+  Timer find(ProjectTask task);
+
+  TimerHistory start(ProjectTask task, LocalDateTime dateTime) throws AxelorException;
+
+  TimerHistory stop(ProjectTask task, LocalDateTime dateTime) throws AxelorException;
+
+  void cancel(ProjectTask task) throws AxelorException;
+
+  Duration compute(ProjectTask task);
 }

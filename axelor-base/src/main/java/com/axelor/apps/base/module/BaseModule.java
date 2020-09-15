@@ -49,7 +49,6 @@ import com.axelor.apps.base.db.repo.ProductRepository;
 import com.axelor.apps.base.db.repo.SequenceBaseRepository;
 import com.axelor.apps.base.db.repo.SequenceRepository;
 import com.axelor.apps.base.db.repo.TaxBaseRepository;
-import com.axelor.apps.base.db.repo.TeamTaskBaseRepository;
 import com.axelor.apps.base.db.repo.UserBaseRepository;
 import com.axelor.apps.base.db.repo.YearBaseRepository;
 import com.axelor.apps.base.db.repo.YearRepository;
@@ -93,8 +92,6 @@ import com.axelor.apps.base.service.ProductMultipleQtyService;
 import com.axelor.apps.base.service.ProductMultipleQtyServiceImpl;
 import com.axelor.apps.base.service.ProductService;
 import com.axelor.apps.base.service.ProductServiceImpl;
-import com.axelor.apps.base.service.TeamTaskService;
-import com.axelor.apps.base.service.TeamTaskServiceImpl;
 import com.axelor.apps.base.service.TradingNameService;
 import com.axelor.apps.base.service.TradingNameServiceImpl;
 import com.axelor.apps.base.service.YearService;
@@ -146,7 +143,6 @@ import com.axelor.auth.db.repo.UserRepository;
 import com.axelor.base.service.ical.ICalendarEventService;
 import com.axelor.base.service.ical.ICalendarEventServiceImpl;
 import com.axelor.report.ReportGenerator;
-import com.axelor.team.db.repo.TeamTaskRepository;
 
 public class BaseModule extends AxelorModule {
 
@@ -196,8 +192,6 @@ public class BaseModule extends AxelorModule {
     bind(ImportDemoDataService.class).to(ImportDemoDataServiceImpl.class);
     bind(MapRestService.class).to(MapRestServiceImpl.class);
     bind(TaxRepository.class).to(TaxBaseRepository.class);
-    bind(TeamTaskRepository.class).to(TeamTaskBaseRepository.class);
-    bind(TeamTaskService.class).to(TeamTaskServiceImpl.class);
     bind(FrequencyService.class).to(FrequencyServiceImpl.class);
     bind(MailingListMessageRepository.class).to(MailingListMessageBaseRepository.class);
     bind(ABCAnalysisService.class).to(ABCAnalysisServiceImpl.class);

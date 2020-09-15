@@ -766,7 +766,6 @@
 	  <view name="team-task-grid" type="grid"/>
 	  <view name="team-task-calendar" type="calendar"/>
 	  <view name="team-task-form" type="form"/>
-	  <view-param name="search-filters" value="team-task-filters"/>
 	  <view-param name="details-view" value="true"/>
 	  <domain>
 	    (self.assignedTo = :__user__  AND self.status NOT IN :closed_status) AND
@@ -779,7 +778,6 @@
 	  <view name="team-task-grid" type="grid"/>
 	  <view name="team-task-calendar" type="calendar"/>
 	  <view name="team-task-form" type="form"/>
-	  <view-param name="search-filters" value="team-task-filters"/>
 	  <view-param name="details-view" value="true"/>
 	  <domain>
 	    (self.assignedTo = :__user__ AND self.status NOT IN :closed_status) AND
@@ -792,7 +790,6 @@
 	  <view name="team-task-grid" type="grid"/>
 	  <view name="team-task-calendar" type="calendar"/>
 	  <view name="team-task-form" type="form"/>
-	  <view-param name="search-filters" value="team-task-filters"/>
 	  <view-param name="details-view" value="true"/>
 	  <domain>self.assignedTo = :__user__ AND self.status NOT IN :closed_status</domain>
 	  <context name="closed_status" expr="#{['closed', 'canceled']}"/>
@@ -802,7 +799,6 @@
 	  <view name="team-task-grid" type="grid"/>
 	  <view name="team-task-calendar" type="calendar"/>
 	  <view name="team-task-form" type="form"/>
-	  <view-param name="search-filters" value="team-task-filters"/>
 	  <view-param name="details-view" value="true"/>
     <domain>self.assignedTo = :__user__ AND self.typeSelect = :_typeSelect</domain>
     <context name="_typeSelect" expr="eval: com.axelor.team.db.repo.TeamTaskRepository.TYPE_TASK"/>
@@ -812,7 +808,6 @@
 	  <view name="team-task-grid" type="grid"/>
 	  <view name="team-task-calendar" type="calendar"/>
 	  <view name="team-task-form" type="form"/>
-	  <view-param name="search-filters" value="team-task-filters"/>
 	  <view-param name="details-view" value="true"/>
 	  <domain>self.createdBy = :__user__ AND self.status NOT IN :closed_status</domain>
 	  <context name="closed_status" expr="#{['closed', 'canceled']}"/>
@@ -822,7 +817,6 @@
     <view name="team-task-grid" type="grid"/>
     <view name="team-task-calendar" type="calendar"/>
     <view name="team-task-form" type="form"/>
-    <view-param name="search-filters" value="team-task-filters"/>
     <view-param name="details-view" value="true"/>
     <domain>self.typeSelect = :_typeSelect</domain>
     <context name="_typeSelect" expr="eval: com.axelor.team.db.repo.TeamTaskRepository.TYPE_TASK"/>
