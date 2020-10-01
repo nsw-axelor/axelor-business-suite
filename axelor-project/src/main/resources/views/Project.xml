@@ -334,7 +334,7 @@
 					name="productSet" colSpan="12" widget="TagSelect" canEdit="false"
 					domain="self.isActivity = true AND dtype = 'Product'" form-view="product-activity-form"
 					grid-view="product-activity-grid" />
-				<field name="teamTaskCategorySet" colSpan="12" widget="TagSelect" />
+				<field name="projectTaskCategorySet" colSpan="12" widget="TagSelect" />
 				<field name="projectFolderSet" colSpan="12" widget="TagSelect" />
 				<field name="excludeTimesheetEditor" if-module="axelor-human-resource"/>
 				<field name="childProjectList" hidden="true" />

@@ -29,7 +29,7 @@
     <string name="fullName" namecolumn="true" title="Name" search="id,name"/>
       
     <many-to-one name="parentTask" ref="com.axelor.apps.project.db.ProjectTask" title="Parent task"/>
-    <many-to-one name="teamTaskCategory" ref="com.axelor.apps.project.db.TeamTaskCategory" title="Category"/>
+    <many-to-one name="projectTaskCategory" ref="com.axelor.apps.project.db.ProjectTaskCategory" title="Category"/>
     <integer name="progressSelect" title="Progress" selection="project.task.progress.select"/>
     <many-to-one name="team" ref="com.axelor.team.db.Team" title="Team"/>
     <one-to-many name="projectTaskList" ref="com.axelor.apps.project.db.ProjectTask" mappedBy="parentTask"/>
@@ -56,7 +56,7 @@
     <decimal name="budgetedTime" title="Estimated time"/>
     <many-to-one name="metaFile" title="Signature" ref="com.axelor.meta.db.MetaFile" />
     
-    <many-to-many name="categorySet" ref="com.axelor.apps.project.db.TeamTaskCategory" title="Tags"/>
+    <many-to-many name="categorySet" ref="com.axelor.apps.project.db.ProjectTaskCategory" title="Tags"/>
    
     <extra-code>
       
@@ -83,7 +83,7 @@
      <field name="status"/>
      <field name="taskDuration"/>
      <field name="taskDeadline"/>
-     <field name="teamTaskCategory"/>
+     <field name="projectTaskCategory"/>
      <field name="progressSelect"/>
      <field name="assignedTo"/>
      <message if="true" on="UPDATE">Task updated</message>

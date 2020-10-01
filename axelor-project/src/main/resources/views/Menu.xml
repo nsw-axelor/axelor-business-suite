@@ -112,11 +112,11 @@
     <!-- PROJECT CONFIGURATION -->
 	<menuitem name="project-configurations" parent="menu-project-root" title="Configuration" order="41" icon="fa-cog"/>
 	
-	<menuitem name="team-task-category" parent="project-configurations" title="Category" action="team.task.category"/>
-	<action-view name="team.task.category" title="Team Task Category" model="com.axelor.apps.project.db.TeamTaskCategory">
-		<view type="grid" name="team-task-category-grid"/>
-		<view type="form" name="team-task-category-form"/>
-		<view-param name="search-filters" value="team-task-category-filters"/>
+	<menuitem name="project-task-category" parent="project-configurations" title="Category" action="project.task.category"/>
+	<action-view name="project.task.category" title="Project Task Category" model="com.axelor.apps.project.db.ProjectTaskCategory">
+		<view type="grid" name="project-task-category-grid"/>
+		<view type="form" name="project-task-category-form"/>
+		<view-param name="search-filters" value="project-task-category-filters"/>
 	</action-view>
 	
 	<menuitem name="project-resource-type" parent="project-configurations" title="Resource types" action="project.resource.types" if="__config__.app.getApp('project').getResourceManagement()" />

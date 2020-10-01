@@ -19,7 +19,7 @@ package com.axelor.apps.businessproject.web;
 
 import com.axelor.apps.businessproject.service.ProjectTaskBusinessProjectService;
 import com.axelor.apps.project.db.ProjectTask;
-import com.axelor.apps.project.db.TeamTaskCategory;
+import com.axelor.apps.project.db.ProjectTaskCategory;
 import com.axelor.apps.project.db.repo.ProjectTaskRepository;
 import com.axelor.exception.service.TraceBackService;
 import com.axelor.inject.Beans;
@@ -85,10 +85,10 @@ public class ProjectTaskController {
 
   public void onChangeCategory(ActionRequest request, ActionResponse response) {
     ProjectTask task = request.getContext().asType(ProjectTask.class);
-    TeamTaskCategory teamTaskCategory = task.getTeamTaskCategory();
+    ProjectTaskCategory projectTaskCategory = task.getProjectTaskCategory();
     try {
       task = businessProjectService.resetProjectTaskValues(task);
-      if (teamTaskCategory != null) {
+      if (projectTaskCategory != null) {
         task = businessProjectService.computeDefaultInformation(task);
       }
 

@@ -38,7 +38,7 @@ import com.axelor.apps.base.service.app.AppBaseService;
 import com.axelor.apps.project.db.Project;
 import com.axelor.apps.project.db.ProjectTask;
 import com.axelor.apps.project.db.TaskTemplate;
-import com.axelor.apps.project.db.TeamTaskCategory;
+import com.axelor.apps.project.db.ProjectTaskCategory;
 import com.axelor.apps.project.db.repo.ProjectRepository;
 import com.axelor.apps.project.db.repo.ProjectTaskRepository;
 import com.axelor.apps.project.service.ProjectTaskServiceImpl;
@@ -325,13 +325,13 @@ public class ProjectTaskBusinessProjectServiceImpl extends ProjectTaskServiceImp
         projectTask.setUnitPrice(this.computeUnitPrice(projectTask));
       }
     } else {
-      TeamTaskCategory teamTaskCategory = projectTask.getTeamTaskCategory();
-      if (teamTaskCategory == null) {
+      ProjectTaskCategory projectTaskCategory = projectTask.getProjectTaskCategory();
+      if (projectTaskCategory == null) {
         return projectTask;
       }
 
-      projectTask.setInvoicingType(teamTaskCategory.getDefaultInvoicingType());
-      projectTask.setProduct(teamTaskCategory.getDefaultProduct());
+      projectTask.setInvoicingType(projectTaskCategory.getDefaultInvoicingType());
+      projectTask.setProduct(projectTaskCategory.getDefaultProduct());
       product = projectTask.getProduct();
       if (product == null) {
         return projectTask;

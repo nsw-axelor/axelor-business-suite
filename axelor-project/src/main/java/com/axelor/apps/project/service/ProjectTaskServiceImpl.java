@@ -99,7 +99,7 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 
     nextProjectTask.setFullName(projectTask.getFullName());
     nextProjectTask.setProject(projectTask.getProject());
-    nextProjectTask.setTeamTaskCategory(projectTask.getTeamTaskCategory());
+    nextProjectTask.setProjectTaskCategory(projectTask.getProjectTaskCategory());
     nextProjectTask.setProgressSelect(0);
 
     projectTask.getMembersUserSet().forEach(nextProjectTask::addMembersUserSetItem);

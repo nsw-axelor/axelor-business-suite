@@ -5,7 +5,7 @@
 
 	<module name="project" package="com.axelor.apps.project.db"/>
 	
-	<entity name="TeamTaskCategory">
+	<entity name="ProjectTaskCategory">
 	
 		<many-to-one name="defaultProduct" ref="com.axelor.apps.base.db.Product" title="Default product"/>
 		<integer name="defaultInvoicingType" selection="business.project.task.invoicing.type.select" title="Default value invoicing type" />
