@@ -8,6 +8,7 @@
     	<field name="name"/>
     	<field name="unit"/>
     	<field name="currency"/>
+        <field name="company" form-view="company-form" grid-view="company-grid"/>
     </grid>
     
     <form name="pack-form" title="Pack" model="com.axelor.apps.sale.db.Pack" onNew="action-pack-record-onnew">
@@ -19,6 +20,7 @@
             <field name="isShowTotal" onChange="action-pack-record-reset-is-hide-unit-amounts" colSpan="3"/>
             <field name="isHideUnitAmounts" colSpan="3" showIf="isShowTotal"/>
             <field name="doNotDisplayHeaderAndEndPack" />
+            <field name="company" form-view="company-form" grid-view="company-grid" colSpan="3"/>
 	    	<panel-related field="components" form-view="pack-line-form" grid-view="pack-line-grid" canMove="true" orderBy="sequence" colSpan="12"/>
     	</panel>
     </form>

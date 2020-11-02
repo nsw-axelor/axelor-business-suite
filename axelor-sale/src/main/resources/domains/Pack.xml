@@ -15,6 +15,7 @@
 		<many-to-one name="unit" ref="com.axelor.apps.base.db.Unit" title="Unit"/>
 		<many-to-one name="currency" ref="com.axelor.apps.base.db.Currency" title="Currency"/>
 		<one-to-many name="components" ref="com.axelor.apps.sale.db.PackLine" title="Components" mappedBy="pack"/>
+        <many-to-one name="company" ref="com.axelor.apps.base.db.Company" required="true" title="Company"/>
 
 	</entity>
 
