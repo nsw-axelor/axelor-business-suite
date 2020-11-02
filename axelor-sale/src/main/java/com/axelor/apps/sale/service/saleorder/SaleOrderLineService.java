@@ -220,39 +220,4 @@ public interface SaleOrderLineService {
    * @return
    */
   public boolean isStartOfPackTypeLineQtyChanged(List<SaleOrderLine> saleOrderLineList);
-
-  /**
-   * Fill price for standard line from pack line.
-   *
-   * @param saleOrderLine
-   * @param saleOrder
-   * @return
-   * @throws AxelorException
-   */
-  public void fillPriceFromPackLine(SaleOrderLine saleOrderLine, SaleOrder saleOrder)
-      throws AxelorException;
-
-  /**
-   * A function used to get the ex tax unit price of a sale order line from pack line
-   *
-   * @param saleOrder the sale order containing the sale order line
-   * @param saleOrderLine
-   * @param taxLine
-   * @return the ex tax unit price of the sale order line
-   * @throws AxelorException
-   */
-  public BigDecimal getExTaxUnitPriceFromPackLine(
-      SaleOrder saleOrder, SaleOrderLine saleOrderLine, TaxLine taxLine) throws AxelorException;
-
-  /**
-   * A function used to get the in tax unit price of a sale order line from pack line
-   *
-   * @param saleOrder the sale order containing the sale order line
-   * @param saleOrderLine
-   * @param taxLine
-   * @return the in tax unit price of the sale order line
-   * @throws AxelorException
-   */
-  public BigDecimal getInTaxUnitPriceFromPackLine(
-      SaleOrder saleOrder, SaleOrderLine saleOrderLine, TaxLine taxLine) throws AxelorException;
 }

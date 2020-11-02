@@ -45,7 +45,7 @@ public class PackLineServiceImpl implements PackLineService {
     packLine.setProductName(null);
     packLine.setPrice(null);
     packLine.setUnit(null);
-    packLine.setQuantity(null);
+    packLine.setQuantity(BigDecimal.ZERO);
     return packLine;
   }
 
@@ -57,7 +57,6 @@ public class PackLineServiceImpl implements PackLineService {
     packLine.setProductName(product.getName());
     packLine.setUnit(this.getSaleUnit(product));
     packLine.setPrice(this.getUnitPrice(packLine, pack));
-    packLine.setQuantity(BigDecimal.ONE);
     return packLine;
   }
 
