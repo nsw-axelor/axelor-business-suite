@@ -185,8 +185,8 @@
                     <span>{{$fmt('totalRealHrs')}} </span><span x-translate>hours</span>
             ]]></viewer>
         </field>
-        <panel-dashlet name="validatedTimesheetLinesPanel" action="action-project-task-dashlet-validated-timeshet-lines" title="Validated Timesheet lines" colSpan="12" canSearch="true"/>
-        <panel-dashlet name="waitingTimesheetLinesPanel" action="action-project-task-dashlet-waiting-timeshet-lines" title="Waiting Timesheet lines" colSpan="12" canSearch="true"/>
+        <panel-dashlet name="validatedTimesheetLinesPanel" action="action-project-task-dashlet-validated-timesheet-lines" title="Validated Timesheet lines" colSpan="12" canSearch="true"/>
+        <panel-dashlet name="waitingTimesheetLinesPanel" action="action-project-task-dashlet-waiting-timesheet-lines" title="Waiting Timesheet lines" colSpan="12" canSearch="true"/>
       </panel>
 
       <panel name="timerPanel" title="Timer" showIf="id" hidden="true" if-module="axelor-helpdesk" if="__config__.app.isApp('helpdesk')">
