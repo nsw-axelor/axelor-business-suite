@@ -23,7 +23,21 @@ import com.axelor.exception.AxelorException;
 
 public interface PackLineService {
 
+  /**
+   * Reset product information when product is null.
+   *
+   * @param packLine
+   * @return {@link PackLine}
+   */
   public PackLine resetProductInformation(PackLine packLine);
 
+  /**
+   * Compute product information when product is not null.
+   *
+   * @param pack
+   * @param packLine
+   * @return {@link PackLine}
+   * @throws AxelorException
+   */
   public PackLine computeProductInformation(Pack pack, PackLine packLine) throws AxelorException;
 }
