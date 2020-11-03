@@ -231,8 +231,8 @@
 		<view type="grid" name="cheque-rejection-grid"/>
 		<view type="form" name="cheque-rejection-form"/>
 		<view-param name="search-filters" value="cheque-rejection-filters"/>
-		<context name="_newDate1" expr="eval: __date__.minusDays(5)"/>
-		<context name="_newDate2" expr="eval: __date__.minusDays(30)"/>
+		<context name="_newDate1" expr="eval: __config__.date.minusDays(5)"/>
+		<context name="_newDate2" expr="eval: __config__.date.minusDays(30)"/>
 	</action-view>
 	
 	<menuitem name="account-root-debt-recovery" parent="account-root"
@@ -807,6 +807,15 @@
 		<view-param name="search-filters" value="cancel-reason-filters"/>
 		<domain>self.applicationType = :_xApplicationType</domain>
 		<context name="_xApplicationType" expr="eval: com.axelor.apps.account.db.Invoice"/>
+	</action-view>
+	
+	<!-- FEC Import -->
+	
+	<menuitem name="fec-import" title="FEC import" parent="account-conf" action="fec.import" />
+	
+	<action-view name="fec.import" title="FEC import" model="com.axelor.apps.account.db.FECImport">
+		<view type="grid" name="fec-import-grid"/>
+		<view type="form" name="fec-import-form"/>
 	</action-view>
 		
 </object-views>
