@@ -810,10 +810,7 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
 
     Boolean productInAti =
         (Boolean) productCompanyService.get(product, "inAti", saleOrder.getCompany());
-    BigDecimal productSalePrice =
-        saleOrderLine.getPrice().compareTo(BigDecimal.ZERO) != 0
-            ? saleOrderLine.getPrice()
-            : (BigDecimal) productCompanyService.get(product, "salePrice", saleOrder.getCompany());
+    BigDecimal productSalePrice = saleOrderLine.getPrice();
 
     BigDecimal price =
         (productInAti == resultInAti)
