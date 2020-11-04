@@ -226,6 +226,10 @@ public class InvoiceLineServiceImpl implements InvoiceLineService {
               price);
     }
 
+    if (price.compareTo(BigDecimal.ZERO) == 0) {
+      price = invoiceLine.getPrice();
+    }
+
     return currencyService
         .getAmountCurrencyConvertedAtDate(
             productCurrency, invoice.getCurrency(), price, invoice.getInvoiceDate())

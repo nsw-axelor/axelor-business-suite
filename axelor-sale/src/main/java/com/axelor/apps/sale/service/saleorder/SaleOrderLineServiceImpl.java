@@ -633,8 +633,8 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
           soLine.setDescription(product.getDescription());
         }
         try {
-          fillPrice(soLine, saleOrder);
-          computeValues(saleOrder, soLine);
+          this.fillPriceFromPackLine(soLine, saleOrder);
+          this.computeValues(saleOrder, soLine);
         } catch (AxelorException e) {
           TraceBackService.trace(e);
         }
@@ -726,8 +726,8 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
       return saleOrderLine;
     }
     try {
-      fillPrice(saleOrderLine, saleOrder);
-      computeValues(saleOrder, saleOrderLine);
+      this.fillPriceFromPackLine(saleOrderLine, saleOrder);
+      this.computeValues(saleOrder, saleOrderLine);
     } catch (AxelorException e) {
       TraceBackService.trace(e);
     }
@@ -751,6 +751,82 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
       }
     }
     return false;
+  }
+
+  @Override
+  public void fillPriceFromPackLine(SaleOrderLine saleOrderLine, SaleOrder saleOrder)
+      throws AxelorException {
+    this.fillTaxInformation(saleOrderLine, saleOrder);
+    saleOrderLine.setCompanyCostPrice(this.getCompanyCostPrice(saleOrder, saleOrderLine));
+    BigDecimal exTaxPrice;
+    BigDecimal inTaxPrice;
+    if (saleOrderLine.getProduct().getInAti()) {
+      inTaxPrice =
+          this.getInTaxUnitPriceFromPackLine(saleOrder, saleOrderLine, saleOrderLine.getTaxLine());
+      inTaxPrice = fillDiscount(saleOrderLine, saleOrder, inTaxPrice);
+      if (!saleOrderLine.getEnableFreezeFields()) {
+        saleOrderLine.setPrice(convertUnitPrice(true, saleOrderLine.getTaxLine(), inTaxPrice));
+        saleOrderLine.setInTaxPrice(inTaxPrice);
+      }
+    } else {
+      exTaxPrice =
+          this.getExTaxUnitPriceFromPackLine(saleOrder, saleOrderLine, saleOrderLine.getTaxLine());
+      exTaxPrice = fillDiscount(saleOrderLine, saleOrder, exTaxPrice);
+      if (!saleOrderLine.getEnableFreezeFields()) {
+        saleOrderLine.setPrice(exTaxPrice);
+        saleOrderLine.setInTaxPrice(
+            convertUnitPrice(false, saleOrderLine.getTaxLine(), exTaxPrice));
+      }
+    }
+  }
+
+  @Override
+  public BigDecimal getExTaxUnitPriceFromPackLine(
+      SaleOrder saleOrder, SaleOrderLine saleOrderLine, TaxLine taxLine) throws AxelorException {
+    return this.getUnitPriceFromPackLine(saleOrder, saleOrderLine, taxLine, false);
+  }
+
+  @Override
+  public BigDecimal getInTaxUnitPriceFromPackLine(
+      SaleOrder saleOrder, SaleOrderLine saleOrderLine, TaxLine taxLine) throws AxelorException {
+    return this.getUnitPriceFromPackLine(saleOrder, saleOrderLine, taxLine, true);
+  }
+
+  /**
+   * A function used to get the unit price of a sale order line from pack line, either in ati or wt
+   *
+   * @param saleOrder the sale order containing the sale order line
+   * @param saleOrderLine
+   * @param taxLine the tax applied to the unit price
+   * @param resultInAti whether you want the result in ati or not
+   * @return the unit price of the sale order line
+   * @throws AxelorException
+   */
+  private BigDecimal getUnitPriceFromPackLine(
+      SaleOrder saleOrder, SaleOrderLine saleOrderLine, TaxLine taxLine, boolean resultInAti)
+      throws AxelorException {
+
+    Product product = saleOrderLine.getProduct();
+
+    Boolean productInAti =
+        (Boolean) productCompanyService.get(product, "inAti", saleOrder.getCompany());
+    BigDecimal productSalePrice =
+        saleOrderLine.getPrice().compareTo(BigDecimal.ZERO) != 0
+            ? saleOrderLine.getPrice()
+            : (BigDecimal) productCompanyService.get(product, "salePrice", saleOrder.getCompany());
+
+    BigDecimal price =
+        (productInAti == resultInAti)
+            ? productSalePrice
+            : this.convertUnitPrice(productInAti, taxLine, productSalePrice);
+
+    return currencyService
+        .getAmountCurrencyConvertedAtDate(
+            (Currency) productCompanyService.get(product, "saleCurrency", saleOrder.getCompany()),
+            saleOrder.getCurrency(),
+            price,
+            saleOrder.getCreationDate())
+        .setScale(appSaleService.getNbDecimalDigitForUnitPrice(), RoundingMode.HALF_UP);
   }
 
   @Override
