@@ -2287,7 +2287,7 @@ CustomerCatalog.product_customer_code as "CustomerProductCode",
 CustomerCatalog.product_customer_name as "CustomerProductName",
 InvoiceLine.is_show_total as showTotal,
 InvoiceLine.is_hide_unit_amounts as hideUnitAmounts,
-(SELECT is_hide_unit_amounts from account_invoice_line as ILine WHERE ILine.invoice = InvoiceLine.invoice AND ILine.type_select = 3 AND ILine.sequence > InvoiceLine.sequence order by ILine.sequence limit 1) as "PackHideUnitAmounts"
+(SELECT is_hide_unit_amounts from account_invoice_line as ILine WHERE ILine.invoice = InvoiceLine.invoice AND ILine.type_select IN (2,3) AND ILine.sequence > InvoiceLine.sequence order by ILine.sequence limit 1) as "PackHideUnitAmounts"
 from account_invoice_line as InvoiceLine
 inner join account_invoice as Invoice on (InvoiceLine.invoice = Invoice.id)
 left outer join account_tax_line as TaxLine on (InvoiceLine.tax_line = TaxLine.id)
@@ -2329,7 +2329,7 @@ null as "CustomerProductCode",
 null as "CustomerProductName",
 InvoiceLine.is_show_total as showTotal,
 InvoiceLine.is_hide_unit_amounts as hideUnitAmounts,
-(SELECT is_hide_unit_amounts from account_invoice_line as ILine WHERE ILine.invoice = InvoiceLine.invoice AND ILine.type_select = 3 AND ILine.sequence > InvoiceLine.sequence order by ILine.sequence limit 1) as "PackHideUnitAmounts"
+(SELECT is_hide_unit_amounts from account_invoice_line as ILine WHERE ILine.invoice = InvoiceLine.invoice AND ILine.type_select IN (2, 3) AND ILine.sequence > InvoiceLine.sequence order by ILine.sequence limit 1) as "PackHideUnitAmounts"
 from account_invoice_line as InvoiceLine
 inner join account_invoice as Invoice on (InvoiceLine.invoice = Invoice.id)
 left outer join account_tax_line as TaxLine on (InvoiceLine.tax_line = TaxLine.id)
@@ -5323,7 +5323,7 @@ row["enablePackMangement"] ? 'InvoiceLine.total' : 'InvoiceLine.endOfPack'
                                         <list-property name="visibility">
                                             <structure>
                                                 <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row["typeselect"] != 0 || row["totaldiscountamount"] >= 0</expression>
+                                                <expression name="valueExpr" type="javascript">row["totaldiscountamount"] >= 0 || row["typeselect"] != 0 || (row["enablePackMangement"] &amp;&amp; row["packhideunitamounts"])</expression>
                                             </structure>
                                         </list-property>
                                         <property name="contentType">html</property>
