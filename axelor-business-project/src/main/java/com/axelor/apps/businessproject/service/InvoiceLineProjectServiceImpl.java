@@ -87,4 +87,13 @@ public class InvoiceLineProjectServiceImpl extends InvoiceLineSupplychainService
     }
     return analyticMoveLineList;
   }
+
+  @Override
+  public List<AnalyticMoveLine> setProjectToAnalyticDistribution(
+      InvoiceLine invoiceLine, List<AnalyticMoveLine> analyticMoveLines) {
+    for (AnalyticMoveLine analyticMoveLine : analyticMoveLines) {
+      analyticMoveLine.setProject(invoiceLine.getProject());
+    }
+    return analyticMoveLines;
+  }
 }

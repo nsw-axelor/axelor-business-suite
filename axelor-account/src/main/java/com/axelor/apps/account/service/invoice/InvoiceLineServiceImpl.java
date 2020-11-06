@@ -130,9 +130,11 @@ public class InvoiceLineServiceImpl implements InvoiceLineService {
                   : Optional.ofNullable(AuthUtils.getUser())
                       .map(User::getActiveCompany)
                       .orElse(null));
-      for (AnalyticMoveLine analyticMoveLine : analyticMoveLineList) {
-        analyticMoveLineService.updateAnalyticMoveLine(
-            analyticMoveLine, invoiceLine.getCompanyExTaxTotal(), date);
+      if (invoiceLine.getAnalyticMoveLineList() != null) {
+        for (AnalyticMoveLine analyticMoveLine : analyticMoveLineList) {
+          analyticMoveLineService.updateAnalyticMoveLine(
+              analyticMoveLine, invoiceLine.getCompanyExTaxTotal(), date);
+        }
       }
       return analyticMoveLineList;
     }
