@@ -2,9 +2,14 @@ package com.axelor.apps.businessproject.service;
 
 import com.axelor.apps.account.db.AnalyticMoveLine;
 import com.axelor.apps.account.db.repo.AnalyticMoveLineRepository;
+import com.axelor.apps.base.service.app.AppBaseService;
 import com.axelor.apps.sale.db.SaleOrder;
 import com.axelor.apps.sale.db.SaleOrderLine;
+import com.axelor.apps.sale.db.repo.SaleOrderLineRepository;
 import com.axelor.apps.sale.db.repo.SaleOrderRepository;
+import com.axelor.apps.sale.service.saleorder.SaleOrderComputeService;
+import com.axelor.apps.sale.service.saleorder.SaleOrderLineService;
+import com.axelor.apps.sale.service.saleorder.SaleOrderMarginService;
 import com.axelor.apps.supplychain.service.SaleOrderServiceSupplychainImpl;
 import com.axelor.apps.supplychain.service.SaleOrderStockService;
 import com.axelor.apps.supplychain.service.app.AppSupplychainService;
@@ -17,11 +22,24 @@ public class SaleOrderServiceProjectImpl extends SaleOrderServiceSupplychainImpl
 
   @Inject
   public SaleOrderServiceProjectImpl(
+      SaleOrderLineService saleOrderLineService,
+      AppBaseService appBaseService,
+      SaleOrderLineRepository saleOrderLineRepo,
+      SaleOrderRepository saleOrderRepo,
+      SaleOrderComputeService saleOrderComputeService,
+      SaleOrderMarginService saleOrderMarginService,
       AppSupplychainService appSupplychainService,
       SaleOrderStockService saleOrderStockService,
-      SaleOrderRepository saleOrderRepository,
       AnalyticMoveLineRepository analyticMoveLineRepository) {
-    super(appSupplychainService, saleOrderStockService, saleOrderRepository);
+    super(
+        saleOrderLineService,
+        appBaseService,
+        saleOrderLineRepo,
+        saleOrderRepo,
+        saleOrderComputeService,
+        saleOrderMarginService,
+        appSupplychainService,
+        saleOrderStockService);
     this.analyticMoveLineRepository = analyticMoveLineRepository;
   }
 
