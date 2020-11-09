@@ -545,7 +545,7 @@ reportContext.getDesignHandle().findMasterPage("Simple MasterPage").setProperty(
                     <structure>
                         <property name="position">64</property>
                         <property name="name">useSignature</property>
-                        <property name="dataType">boolean</property>
+                        <property name="dataType">integer</property>
                     </structure>
                     <structure>
                         <property name="position">65</property>
@@ -938,7 +938,7 @@ reportContext.getDesignHandle().findMasterPage("Simple MasterPage").setProperty(
                     <property name="position">64</property>
                     <property name="name">useSignature</property>
                     <property name="nativeName">useSignature</property>
-                    <property name="dataType">boolean</property>
+                    <property name="dataType">integer</property>
                 </structure>
                 <structure>
                     <property name="position">65</property>
