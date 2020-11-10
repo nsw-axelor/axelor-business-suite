@@ -43,6 +43,7 @@ import com.axelor.common.ObjectUtils;
 import com.axelor.db.EntityHelper;
 import com.axelor.db.Query;
 import com.axelor.exception.AxelorException;
+import com.axelor.exception.service.TraceBackService;
 import com.axelor.inject.Beans;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
@@ -268,7 +269,11 @@ public class InvoiceServiceSupplychainImpl extends InvoiceServiceImpl
         if (invoiceLine.getTypeSelect() == InvoiceLineRepository.TYPE_END_OF_PACK) {
           break;
         }
-        invoiceLineService.updateProductQty(invoiceLine, invoice, oldQty, newQty);
+        try {
+          invoiceLineService.updateProductQty(invoiceLine, invoice, oldQty, newQty);
+        } catch (AxelorException e) {
+          TraceBackService.trace(e);
+        }
       }
     }
     return invoice;

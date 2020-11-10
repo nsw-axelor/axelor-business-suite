@@ -331,7 +331,8 @@ public class SaleOrderLineServiceSupplyChainImpl extends SaleOrderLineServiceImp
 
   @Override
   public SaleOrderLine updateProductQty(
-      SaleOrderLine saleOrderLine, SaleOrder saleOrder, BigDecimal oldQty, BigDecimal newQty) {
+      SaleOrderLine saleOrderLine, SaleOrder saleOrder, BigDecimal oldQty, BigDecimal newQty)
+      throws AxelorException {
     BigDecimal qty = saleOrderLine.getQty();
     qty =
         qty.divide(oldQty, appBaseService.getNbDecimalDigitForQty(), RoundingMode.HALF_EVEN)

@@ -721,16 +721,13 @@ public class SaleOrderLineServiceImpl implements SaleOrderLineService {
 
   @Override
   public SaleOrderLine updateProductQty(
-      SaleOrderLine saleOrderLine, SaleOrder saleOrder, BigDecimal oldQty, BigDecimal newQty) {
+      SaleOrderLine saleOrderLine, SaleOrder saleOrder, BigDecimal oldQty, BigDecimal newQty)
+      throws AxelorException {
     if (saleOrderLine.getTypeSelect() != SaleOrderLineRepository.TYPE_NORMAL) {
       return saleOrderLine;
     }
-    try {
-      this.fillPriceFromPackLine(saleOrderLine, saleOrder);
-      this.computeValues(saleOrder, saleOrderLine);
-    } catch (AxelorException e) {
-      TraceBackService.trace(e);
-    }
+    this.fillPriceFromPackLine(saleOrderLine, saleOrder);
+    this.computeValues(saleOrder, saleOrderLine);
     return saleOrderLine;
   }
 

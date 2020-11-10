@@ -49,7 +49,6 @@ import com.axelor.auth.AuthUtils;
 import com.axelor.auth.db.User;
 import com.axelor.common.ObjectUtils;
 import com.axelor.exception.AxelorException;
-import com.axelor.exception.service.TraceBackService;
 import com.axelor.inject.Beans;
 import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
@@ -501,7 +500,8 @@ public class InvoiceLineServiceImpl implements InvoiceLineService {
 
   @Override
   public InvoiceLine updateProductQty(
-      InvoiceLine invoiceLine, Invoice invoice, BigDecimal oldQty, BigDecimal newQty) {
+      InvoiceLine invoiceLine, Invoice invoice, BigDecimal oldQty, BigDecimal newQty)
+      throws AxelorException {
     BigDecimal qty =
         invoiceLine
             .getQty()
@@ -513,30 +513,28 @@ public class InvoiceLineServiceImpl implements InvoiceLineService {
         || invoiceLine.getProduct() == null) {
       return invoiceLine;
     }
-    try {
-      BigDecimal exTaxTotal;
-      BigDecimal inTaxTotal;
-      BigDecimal taxRate = BigDecimal.ZERO;
-      BigDecimal priceDiscounted = this.computeDiscount(invoiceLine, invoice.getInAti());
-      if (invoiceLine.getTaxLine() != null) {
-        taxRate = invoiceLine.getTaxLine().getValue();
-      }
-      if (Boolean.FALSE.equals(invoice.getInAti())) {
-        exTaxTotal = InvoiceLineManagement.computeAmount(qty, priceDiscounted);
-        inTaxTotal = exTaxTotal.add(exTaxTotal.multiply(taxRate));
-      } else {
-        inTaxTotal = InvoiceLineManagement.computeAmount(qty, priceDiscounted);
-        exTaxTotal = inTaxTotal.divide(taxRate.add(BigDecimal.ONE), 2, BigDecimal.ROUND_HALF_UP);
-      }
-      invoiceLine.setExTaxTotal(exTaxTotal);
-      invoiceLine.setCompanyExTaxTotal(this.getCompanyExTaxTotal(exTaxTotal, invoice));
-      invoiceLine.setInTaxTotal(inTaxTotal);
-      invoiceLine.setCompanyInTaxTotal(this.getCompanyExTaxTotal(inTaxTotal, invoice));
-      invoiceLine.setPriceDiscounted(priceDiscounted);
-      invoiceLine.setTaxRate(taxRate);
-    } catch (Exception e) {
-      TraceBackService.trace(e);
+
+    BigDecimal exTaxTotal;
+    BigDecimal inTaxTotal;
+    BigDecimal taxRate = BigDecimal.ZERO;
+    BigDecimal priceDiscounted = this.computeDiscount(invoiceLine, invoice.getInAti());
+    if (invoiceLine.getTaxLine() != null) {
+      taxRate = invoiceLine.getTaxLine().getValue();
     }
+    if (Boolean.FALSE.equals(invoice.getInAti())) {
+      exTaxTotal = InvoiceLineManagement.computeAmount(qty, priceDiscounted);
+      inTaxTotal = exTaxTotal.add(exTaxTotal.multiply(taxRate));
+    } else {
+      inTaxTotal = InvoiceLineManagement.computeAmount(qty, priceDiscounted);
+      exTaxTotal = inTaxTotal.divide(taxRate.add(BigDecimal.ONE), 2, BigDecimal.ROUND_HALF_UP);
+    }
+    invoiceLine.setExTaxTotal(exTaxTotal);
+    invoiceLine.setCompanyExTaxTotal(this.getCompanyExTaxTotal(exTaxTotal, invoice));
+    invoiceLine.setInTaxTotal(inTaxTotal);
+    invoiceLine.setCompanyInTaxTotal(this.getCompanyExTaxTotal(inTaxTotal, invoice));
+    invoiceLine.setPriceDiscounted(priceDiscounted);
+    invoiceLine.setTaxRate(taxRate);
+
     return this.computeAnalyticDistributionWithUpdatedQty(invoiceLine);
   }
 

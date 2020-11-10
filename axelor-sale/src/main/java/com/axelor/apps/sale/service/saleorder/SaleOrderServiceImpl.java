@@ -259,7 +259,11 @@ public class SaleOrderServiceImpl implements SaleOrderService {
         if (SOLine.getTypeSelect() == SaleOrderLineRepository.TYPE_END_OF_PACK) {
           break;
         }
-        saleOrderLineService.updateProductQty(SOLine, saleOrder, oldQty, newQty);
+        try {
+          saleOrderLineService.updateProductQty(SOLine, saleOrder, oldQty, newQty);
+        } catch (AxelorException e) {
+          TraceBackService.trace(e);
+        }
       }
     }
     return saleOrder;

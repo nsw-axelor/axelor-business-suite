@@ -208,10 +208,12 @@ public interface SaleOrderLineService {
    * @param saleOrder
    * @param oldQty
    * @param newQty
-   * @return
+   * @return {@link SaleOrderLine}}
+   * @throws AxelorException
    */
   public SaleOrderLine updateProductQty(
-      SaleOrderLine saleOrderLine, SaleOrder saleOrder, BigDecimal oldQty, BigDecimal newQty);
+      SaleOrderLine saleOrderLine, SaleOrder saleOrder, BigDecimal oldQty, BigDecimal newQty)
+      throws AxelorException;
 
   /**
    * To check that Start of pack type line quantity changed or not.

@@ -103,8 +103,10 @@ public interface InvoiceLineService {
    * @param invoice
    * @param oldQty
    * @param newQty
-   * @return
+   * @return {@link InvoiceLine}
+   * @throws AxelorException
    */
   public InvoiceLine updateProductQty(
-      InvoiceLine invoiceLine, Invoice invoice, BigDecimal oldQty, BigDecimal newQty);
+      InvoiceLine invoiceLine, Invoice invoice, BigDecimal oldQty, BigDecimal newQty)
+      throws AxelorException;
 }
