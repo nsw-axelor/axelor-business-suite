@@ -33,6 +33,7 @@ import com.axelor.apps.supplychain.service.SaleOrderInvoiceService;
 import com.axelor.apps.supplychain.service.invoice.InvoiceServiceSupplychain;
 import com.axelor.apps.supplychain.service.invoice.SubscriptionInvoiceService;
 import com.axelor.db.JPA;
+import com.axelor.exception.AxelorException;
 import com.axelor.exception.service.TraceBackService;
 import com.axelor.i18n.I18n;
 import com.axelor.inject.Beans;
@@ -318,7 +319,11 @@ public class InvoiceController {
             .isStartOfPackTypeLineQtyChanged(invoice.getInvoiceLineList())) {
       return;
     }
-    Beans.get(InvoiceServiceSupplychain.class).updateProductQtyWithPackHeaderQty(invoice);
+    try {
+      Beans.get(InvoiceServiceSupplychain.class).updateProductQtyWithPackHeaderQty(invoice);
+    } catch (AxelorException e) {
+      TraceBackService.trace(response, e);
+    }
     response.setReload(true);
   }
 }

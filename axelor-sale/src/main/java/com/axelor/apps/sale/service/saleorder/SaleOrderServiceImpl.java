@@ -237,8 +237,8 @@ public class SaleOrderServiceImpl implements SaleOrderService {
   }
 
   @Override
-  @Transactional
-  public SaleOrder updateProductQtyWithPackHeaderQty(SaleOrder saleOrder) {
+  @Transactional(rollbackOn = {Exception.class})
+  public SaleOrder updateProductQtyWithPackHeaderQty(SaleOrder saleOrder) throws AxelorException {
     List<SaleOrderLine> saleOrderLineList = saleOrder.getSaleOrderLineList();
     boolean isStartOfPack = false;
     BigDecimal newQty = BigDecimal.ZERO;
@@ -259,11 +259,7 @@ public class SaleOrderServiceImpl implements SaleOrderService {
         if (SOLine.getTypeSelect() == SaleOrderLineRepository.TYPE_END_OF_PACK) {
           break;
         }
-        try {
-          saleOrderLineService.updateProductQty(SOLine, saleOrder, oldQty, newQty);
-        } catch (AxelorException e) {
-          TraceBackService.trace(e);
-        }
+        saleOrderLineService.updateProductQty(SOLine, saleOrder, oldQty, newQty);
       }
     }
     return saleOrder;

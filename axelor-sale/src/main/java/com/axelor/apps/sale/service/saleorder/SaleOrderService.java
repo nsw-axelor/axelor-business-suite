@@ -84,7 +84,8 @@ public interface SaleOrderService {
    * To update product quantity with pack header quantity.
    *
    * @param saleOrder
-   * @return
+   * @return {@link SaleOrder}
+   * @throws AxelorException
    */
-  public SaleOrder updateProductQtyWithPackHeaderQty(SaleOrder saleOrder);
+  public SaleOrder updateProductQtyWithPackHeaderQty(SaleOrder saleOrder) throws AxelorException;
 }

@@ -752,7 +752,11 @@ public class SaleOrderController {
             .isStartOfPackTypeLineQtyChanged(saleOrder.getSaleOrderLineList())) {
       return;
     }
-    Beans.get(SaleOrderService.class).updateProductQtyWithPackHeaderQty(saleOrder);
+    try {
+      Beans.get(SaleOrderService.class).updateProductQtyWithPackHeaderQty(saleOrder);
+    } catch (AxelorException e) {
+      TraceBackService.trace(response, e);
+    }
     response.setReload(true);
   }
 }

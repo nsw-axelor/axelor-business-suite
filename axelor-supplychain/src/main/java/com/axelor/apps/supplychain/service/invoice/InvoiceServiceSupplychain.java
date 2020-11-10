@@ -18,6 +18,7 @@
 package com.axelor.apps.supplychain.service.invoice;
 
 import com.axelor.apps.account.db.Invoice;
+import com.axelor.exception.AxelorException;
 
 public interface InvoiceServiceSupplychain {
 
@@ -39,7 +40,8 @@ public interface InvoiceServiceSupplychain {
    * To update product qty with pack header qty.
    *
    * @param invoice
-   * @return
+   * @return {@link Invoice}
+   * @throws AxelorException
    */
-  public Invoice updateProductQtyWithPackHeaderQty(Invoice invoice);
+  public Invoice updateProductQtyWithPackHeaderQty(Invoice invoice) throws AxelorException;
 }
