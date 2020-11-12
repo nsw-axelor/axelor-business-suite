@@ -517,9 +517,12 @@ public class InvoiceLineServiceImpl implements InvoiceLineService {
     BigDecimal exTaxTotal;
     BigDecimal inTaxTotal;
     BigDecimal taxRate = BigDecimal.ZERO;
+    TaxLine taxLine = invoiceLine.getTaxLine();
     BigDecimal priceDiscounted = this.computeDiscount(invoiceLine, invoice.getInAti());
-    if (invoiceLine.getTaxLine() != null) {
-      taxRate = invoiceLine.getTaxLine().getValue();
+    if (taxLine != null) {
+      taxRate = taxLine.getValue();
+      invoiceLine.setTaxRate(taxRate);
+      invoiceLine.setTaxCode(taxLine.getTax().getCode());
     }
     if (Boolean.FALSE.equals(invoice.getInAti())) {
       exTaxTotal = InvoiceLineManagement.computeAmount(qty, priceDiscounted);
@@ -533,7 +536,6 @@ public class InvoiceLineServiceImpl implements InvoiceLineService {
     invoiceLine.setInTaxTotal(inTaxTotal);
     invoiceLine.setCompanyInTaxTotal(this.getCompanyExTaxTotal(inTaxTotal, invoice));
     invoiceLine.setPriceDiscounted(priceDiscounted);
-    invoiceLine.setTaxRate(taxRate);
 
     return this.computeAnalyticDistributionWithUpdatedQty(invoiceLine);
   }
