@@ -3,15 +3,17 @@
  *
  * Copyright (C) 2020 Axelor (<http://axelor.com>).
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU Affero General Public License, version 3, as published by the Free Software Foundation.
+ * This program is free software: you can redistribute it and/or  modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Affero General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.axelor.apps.supplychain.module;
 
@@ -31,6 +33,7 @@ import com.axelor.apps.account.service.payment.invoice.payment.InvoicePaymentToo
 import com.axelor.apps.purchase.db.repo.PurchaseOrderManagementRepository;
 import com.axelor.apps.purchase.service.PurchaseOrderLineServiceImpl;
 import com.axelor.apps.purchase.service.PurchaseOrderServiceImpl;
+import com.axelor.apps.purchase.service.PurchaseOrderWorkflowServiceImpl;
 import com.axelor.apps.purchase.service.PurchaseProductService;
 import com.axelor.apps.purchase.service.PurchaseProductServiceImpl;
 import com.axelor.apps.purchase.service.PurchaseRequestServiceImpl;
@@ -98,6 +101,7 @@ import com.axelor.apps.supplychain.service.PurchaseOrderServiceSupplychainImpl;
 import com.axelor.apps.supplychain.service.PurchaseOrderStockService;
 import com.axelor.apps.supplychain.service.PurchaseOrderStockServiceImpl;
 import com.axelor.apps.supplychain.service.PurchaseOrderSupplychainService;
+import com.axelor.apps.supplychain.service.PurchaseOrderWorkflowServiceSupplychainImpl;
 import com.axelor.apps.supplychain.service.PurchaseRequestServiceSupplychainImpl;
 import com.axelor.apps.supplychain.service.ReservedQtyService;
 import com.axelor.apps.supplychain.service.ReservedQtyServiceImpl;
@@ -230,5 +234,7 @@ public class SupplychainModule extends AxelorModule {
     bind(StockMoveReservedQtyService.class).to(StockMoveReservedQtyServiceImpl.class);
     bind(PurchaseOrderLineServiceSupplyChain.class)
         .to(PurchaseOrderLineServiceSupplychainImpl.class);
+    bind(PurchaseOrderWorkflowServiceImpl.class)
+        .to(PurchaseOrderWorkflowServiceSupplychainImpl.class);
   }
 }
