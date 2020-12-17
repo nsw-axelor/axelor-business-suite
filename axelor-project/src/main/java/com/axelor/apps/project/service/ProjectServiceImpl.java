@@ -28,6 +28,7 @@ import com.axelor.apps.project.db.repo.WikiRepository;
 import com.axelor.apps.project.translation.ITranslation;
 import com.axelor.auth.AuthUtils;
 import com.axelor.auth.db.User;
+import com.axelor.common.ObjectUtils;
 import com.axelor.exception.AxelorException;
 import com.axelor.exception.db.repo.TraceBackRepository;
 import com.axelor.i18n.I18n;
@@ -38,6 +39,9 @@ import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -168,12 +172,25 @@ public class ProjectServiceImpl implements ProjectService {
       projectRepository.save(project);
 
       Set<TaskTemplate> taskTemplateSet = projectTemplate.getTaskTemplateSet();
+      List<TaskTemplate> aList = new ArrayList<TaskTemplate>(taskTemplateSet);
+      aList.forEach(it -> {
+        System.err.println( it.getId() + " : " + it.getParentTaskTemplate());
+      });
+      Comparator<TaskTemplate> taskTemplateComparator = (TaskTemplate t1, TaskTemplate t2) -> {
+        System.err.println("test.........." + t1 == null || t1.getParentTaskTemplate() == null || t2 == null ? 1 : t1.getParentTaskTemplate().getId().equals(t2.getId()) ? -1 : 1 ); 
+        return t1.getParentTaskTemplate() == null || t2 == null ? 1 : t1.getParentTaskTemplate().getId().equals(t2.getId()) ? -1 : 1;
+         };
+         Collections.sort(aList, taskTemplateComparator);
+         
+         aList.forEach(it -> {
+           System.err.println( it.getId() + " : " + it.getParentTaskTemplate());
+         });
 
       if (taskTemplateSet != null) {
         Iterator<TaskTemplate> taskTemplateItr = taskTemplateSet.iterator();
 
         while (taskTemplateItr.hasNext()) {
-          createTask(taskTemplateItr.next(), project);
+          createTask(taskTemplateItr.next(), project, taskTemplateSet);
         }
       }
 
@@ -181,12 +198,32 @@ public class ProjectServiceImpl implements ProjectService {
     }
   }
 
-  public TeamTask createTask(TaskTemplate taskTemplate, Project project) {
+  public TeamTask createTask(
+      TaskTemplate taskTemplate, Project project, Set<TaskTemplate> taskTemplateSet) {
 
+    if (!ObjectUtils.isEmpty(project.getTeamTaskList())
+        && project
+            .getTeamTaskList()
+            .stream()
+            .anyMatch(it -> it.getName().equals(taskTemplate.getName()))) {
+      return null;
+    }
     TeamTask task =
         teamTaskProjectService.create(
             taskTemplate.getName(), project, taskTemplate.getAssignedTo());
     task.setDescription(taskTemplate.getDescription());
+
+    TaskTemplate parentTaskTemplate = taskTemplate.getParentTaskTemplate();
+    
+    
+    if (parentTaskTemplate != null && taskTemplateSet.contains(parentTaskTemplate)) {
+      
+        TeamTask parentTask =
+            this.createTask(taskTemplate.getParentTaskTemplate(), project, taskTemplateSet);
+        task.setParentTask(parentTask);
+        return parentTask;
+      }
+    
 
     return task;
   }
