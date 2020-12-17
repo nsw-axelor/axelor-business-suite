@@ -1,22 +1,43 @@
 package com.axelor.apps.project.service;
 
+import java.util.Set;
 import com.axelor.apps.project.db.ProjectTemplate;
+import com.axelor.apps.project.db.TaskTemplate;
 import com.axelor.apps.project.db.repo.ProjectTemplateRepository;
+import com.axelor.common.ObjectUtils;
 import com.google.inject.Inject;
+import com.google.inject.persist.Transactional;
 
 public class ProjectTemplateServiceImpl implements ProjectTemplateService {
-  
+
   protected ProjectTemplateRepository projectTemplateRepo;
+  protected TaskTemplateService taskTemplateService;
 
   @Inject
-  public ProjectTemplateServiceImpl(ProjectTemplateRepository projectTemplateRepo) {
+  public ProjectTemplateServiceImpl(
+      ProjectTemplateRepository projectTemplateRepo, TaskTemplateService taskTemplateService) {
     this.projectTemplateRepo = projectTemplateRepo;
+    this.taskTemplateService = taskTemplateService;
   }
 
   @Override
   public ProjectTemplate addParentTaskTemplate(ProjectTemplate projectTemplate) {
-    ProjectTemplate oldProjectTemplate = projectTemplateRepo.find(projectTemplate.getId());
-    
+    Set<TaskTemplate> taskTemplateSet = projectTemplate.getTaskTemplateSet();
+    if (ObjectUtils.isEmpty(taskTemplateSet)) {
+      return projectTemplate;
+    }
+    Set<TaskTemplate> newTaskTemplateSet =
+        projectTemplate.getId() == null
+            ? taskTemplateSet
+            : taskTemplateService.getNewAddedTaskTemplate(
+                projectTemplateRepo.find(projectTemplate.getId()).getTaskTemplateSet(),
+                taskTemplateSet);
+    if (ObjectUtils.isEmpty(newTaskTemplateSet)) {
+      return projectTemplate;
+    }
+    projectTemplate.setTaskTemplateSet(
+        taskTemplateService.getParentTaskTemplateFromTaskTemplates(
+            newTaskTemplateSet, taskTemplateSet));
     return projectTemplate;
   }
 }
