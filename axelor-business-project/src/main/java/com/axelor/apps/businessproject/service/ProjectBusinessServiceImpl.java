@@ -17,6 +17,7 @@
  */
 package com.axelor.apps.businessproject.service;
 
+import java.util.Set;
 import com.axelor.apps.account.service.AccountingSituationService;
 import com.axelor.apps.base.db.AppSupplychain;
 import com.axelor.apps.base.db.Company;
@@ -238,8 +239,8 @@ public class ProjectBusinessServiceImpl extends ProjectServiceImpl
   }
 
   @Override
-  public TeamTask createTask(TaskTemplate taskTemplate, Project project) {
-    TeamTask task = super.createTask(taskTemplate, project);
+  public TeamTask createTask(TaskTemplate taskTemplate, Project project, Set<TaskTemplate> taskTemplateSet) {
+    TeamTask task = super.createTask(taskTemplate, project, taskTemplateSet);
     return task;
   }
 }
