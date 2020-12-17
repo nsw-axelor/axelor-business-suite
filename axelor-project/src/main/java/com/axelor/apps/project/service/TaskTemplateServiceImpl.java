@@ -21,16 +21,16 @@ public class TaskTemplateServiceImpl implements TaskTemplateService {
   @Override
   public Set<TaskTemplate> getParentTaskTemplateFromTaskTemplates(
       Set<TaskTemplate> newTaskTemplateSet, Set<TaskTemplate> taskTemplateSet) {
-//    for (TaskTemplate taskTemplate : newTaskTemplateSet) {
-//      taskTemplateSet.addAll(
-//          this.getParentTaskTemplateFromTaskTemplate(
-//              taskTemplate.getParentTaskTemplate(), taskTemplateSet));
-//    }
-    newTaskTemplateSet.stream().forEach( it -> {
+    for (TaskTemplate taskTemplate : newTaskTemplateSet) {
       taskTemplateSet.addAll(
-        this.getParentTaskTemplateFromTaskTemplate(
-            it.getParentTaskTemplate(), taskTemplateSet));
-    });
+          this.getParentTaskTemplateFromTaskTemplate(
+              taskTemplate.getParentTaskTemplate(), taskTemplateSet));
+    }
+//    newTaskTemplateSet.stream().forEach( it -> {
+//      taskTemplateSet.addAll(
+//        this.getParentTaskTemplateFromTaskTemplate(
+//            it.getParentTaskTemplate(), taskTemplateSet));
+//    });
     return taskTemplateSet;
   }
 
