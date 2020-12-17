@@ -173,18 +173,26 @@ public class ProjectServiceImpl implements ProjectService {
 
       Set<TaskTemplate> taskTemplateSet = projectTemplate.getTaskTemplateSet();
       List<TaskTemplate> aList = new ArrayList<TaskTemplate>(taskTemplateSet);
-      aList.forEach(it -> {
-        System.err.println( it.getId() + " : " + it.getParentTaskTemplate());
-      });
-      Comparator<TaskTemplate> taskTemplateComparator = (TaskTemplate t1, TaskTemplate t2) -> {
-        System.err.println("test.........." + t1 == null || t1.getParentTaskTemplate() == null || t2 == null ? 1 : t1.getParentTaskTemplate().getId().equals(t2.getId()) ? -1 : 1 ); 
-        return t1.getParentTaskTemplate() == null || t2 == null ? 1 : t1.getParentTaskTemplate().getId().equals(t2.getId()) ? -1 : 1;
-         };
-         Collections.sort(aList, taskTemplateComparator);
-         
-         aList.forEach(it -> {
-           System.err.println( it.getId() + " : " + it.getParentTaskTemplate());
-         });
+      aList.forEach(
+          it -> {
+            System.err.println(it.getId() + " : " + it.getParentTaskTemplate());
+          });
+      Comparator<TaskTemplate> taskTemplateComparator =
+          (TaskTemplate t1, TaskTemplate t2) -> {
+            System.err.println(
+                "test.........." + t1 == null || t1.getParentTaskTemplate() == null || t2 == null
+                    ? 1
+                    : t1.getParentTaskTemplate().getId().equals(t2.getId()) ? -1 : 1);
+            return t1.getParentTaskTemplate() == null || t2 == null
+                ? 1
+                : t1.getParentTaskTemplate().getId().equals(t2.getId()) ? -1 : 1;
+          };
+      Collections.sort(aList, taskTemplateComparator);
+
+      aList.forEach(
+          it -> {
+            System.err.println(it.getId() + " : " + it.getParentTaskTemplate());
+          });
 
       if (taskTemplateSet != null) {
         Iterator<TaskTemplate> taskTemplateItr = taskTemplateSet.iterator();
@@ -202,9 +210,7 @@ public class ProjectServiceImpl implements ProjectService {
       TaskTemplate taskTemplate, Project project, Set<TaskTemplate> taskTemplateSet) {
 
     if (!ObjectUtils.isEmpty(project.getTeamTaskList())
-        && project
-            .getTeamTaskList()
-            .stream()
+        && project.getTeamTaskList().stream()
             .anyMatch(it -> it.getName().equals(taskTemplate.getName()))) {
       return null;
     }
@@ -214,16 +220,14 @@ public class ProjectServiceImpl implements ProjectService {
     task.setDescription(taskTemplate.getDescription());
 
     TaskTemplate parentTaskTemplate = taskTemplate.getParentTaskTemplate();
-    
-    
+
     if (parentTaskTemplate != null && taskTemplateSet.contains(parentTaskTemplate)) {
-      
-        TeamTask parentTask =
-            this.createTask(taskTemplate.getParentTaskTemplate(), project, taskTemplateSet);
-        task.setParentTask(parentTask);
-        return parentTask;
-      }
-    
+
+      TeamTask parentTask =
+          this.createTask(taskTemplate.getParentTaskTemplate(), project, taskTemplateSet);
+      task.setParentTask(parentTask);
+      return parentTask;
+    }
 
     return task;
   }

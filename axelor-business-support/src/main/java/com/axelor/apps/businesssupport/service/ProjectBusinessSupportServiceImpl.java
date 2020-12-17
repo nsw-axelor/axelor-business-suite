@@ -17,13 +17,13 @@
  */
 package com.axelor.apps.businesssupport.service;
 
-import java.util.Set;
 import com.axelor.apps.businessproject.service.ProjectBusinessServiceImpl;
 import com.axelor.apps.project.db.Project;
 import com.axelor.apps.project.db.TaskTemplate;
 import com.axelor.apps.project.db.repo.ProjectRepository;
 import com.axelor.team.db.TeamTask;
 import com.google.inject.Inject;
+import java.util.Set;
 
 public class ProjectBusinessSupportServiceImpl extends ProjectBusinessServiceImpl {
 
@@ -33,10 +33,13 @@ public class ProjectBusinessSupportServiceImpl extends ProjectBusinessServiceImp
   }
 
   @Override
-  public TeamTask createTask(TaskTemplate taskTemplate, Project project, Set<TaskTemplate> taskTemplateSet) {
+  public TeamTask createTask(
+      TaskTemplate taskTemplate, Project project, Set<TaskTemplate> taskTemplateSet) {
 
     TeamTask task = super.createTask(taskTemplate, project, taskTemplateSet);
-    task.setInternalDescription(taskTemplate.getInternalDescription());
+    if (task != null) {
+      task.setInternalDescription(taskTemplate.getInternalDescription());
+    }
 
     return task;
   }
