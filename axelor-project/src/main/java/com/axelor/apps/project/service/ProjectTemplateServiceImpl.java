@@ -1,12 +1,11 @@
 package com.axelor.apps.project.service;
 
-import java.util.Set;
 import com.axelor.apps.project.db.ProjectTemplate;
 import com.axelor.apps.project.db.TaskTemplate;
 import com.axelor.apps.project.db.repo.ProjectTemplateRepository;
 import com.axelor.common.ObjectUtils;
 import com.google.inject.Inject;
-import com.google.inject.persist.Transactional;
+import java.util.Set;
 
 public class ProjectTemplateServiceImpl implements ProjectTemplateService {
 

@@ -5,5 +5,4 @@ import com.axelor.apps.project.db.ProjectTemplate;
 public interface ProjectTemplateService {
 
   ProjectTemplate addParentTaskTemplate(ProjectTemplate projectTemplate);
-  
 }

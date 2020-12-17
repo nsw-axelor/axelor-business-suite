@@ -121,10 +121,11 @@ public class ProjectTemplateController {
       TraceBackService.trace(response, e);
     }
   }
-  
+
   public void addParentTaskTemplate(ActionRequest request, ActionResponse response) {
-     ProjectTemplate projectTemplate = request.getContext().asType(ProjectTemplate.class);
-     projectTemplate = Beans.get(ProjectTemplateService.class).addParentTaskTemplate(projectTemplate);
-     response.setValue("taskTemplateSet",projectTemplate.getTaskTemplateSet());
+    ProjectTemplate projectTemplate = request.getContext().asType(ProjectTemplate.class);
+    projectTemplate =
+        Beans.get(ProjectTemplateService.class).addParentTaskTemplate(projectTemplate);
+    response.setValue("taskTemplateSet", projectTemplate.getTaskTemplateSet());
   }
 }

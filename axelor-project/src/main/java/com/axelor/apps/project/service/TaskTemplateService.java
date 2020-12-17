@@ -1,7 +1,7 @@
 package com.axelor.apps.project.service;
 
-import java.util.Set;
 import com.axelor.apps.project.db.TaskTemplate;
+import java.util.Set;
 
 public interface TaskTemplateService {
 

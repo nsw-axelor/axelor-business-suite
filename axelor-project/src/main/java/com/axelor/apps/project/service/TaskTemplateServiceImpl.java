@@ -1,9 +1,9 @@
 package com.axelor.apps.project.service;
 
-import java.util.Set;
-import java.util.stream.Collectors;
 import com.axelor.apps.project.db.TaskTemplate;
 import com.axelor.common.ObjectUtils;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TaskTemplateServiceImpl implements TaskTemplateService {
 
@@ -12,8 +12,7 @@ public class TaskTemplateServiceImpl implements TaskTemplateService {
       Set<TaskTemplate> oldTaskTemplateSet, Set<TaskTemplate> taskTemplateSet) {
     return ObjectUtils.isEmpty(oldTaskTemplateSet)
         ? taskTemplateSet
-        : taskTemplateSet
-            .stream()
+        : taskTemplateSet.stream()
             .filter(it -> !oldTaskTemplateSet.contains(it))
             .collect(Collectors.toSet());
   }
@@ -26,11 +25,11 @@ public class TaskTemplateServiceImpl implements TaskTemplateService {
           this.getParentTaskTemplateFromTaskTemplate(
               taskTemplate.getParentTaskTemplate(), taskTemplateSet));
     }
-//    newTaskTemplateSet.stream().forEach( it -> {
-//      taskTemplateSet.addAll(
-//        this.getParentTaskTemplateFromTaskTemplate(
-//            it.getParentTaskTemplate(), taskTemplateSet));
-//    });
+    //    newTaskTemplateSet.stream().forEach( it -> {
+    //      taskTemplateSet.addAll(
+    //        this.getParentTaskTemplateFromTaskTemplate(
+    //            it.getParentTaskTemplate(), taskTemplateSet));
+    //    });
     return taskTemplateSet;
   }
 
