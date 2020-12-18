@@ -24,6 +24,7 @@ import com.axelor.auth.db.User;
 import com.axelor.team.db.TeamTask;
 import com.axelor.team.db.repo.TeamTaskRepository;
 import com.google.inject.Inject;
+import com.google.inject.persist.Transactional;
 import java.time.LocalDate;
 
 public class TeamTaskProjectServiceImpl extends TeamTaskServiceImpl
@@ -39,6 +40,7 @@ public class TeamTaskProjectServiceImpl extends TeamTaskServiceImpl
   }
 
   @Override
+  @Transactional
   public TeamTask create(String subject, Project project, User assignedTo) {
     TeamTask task = new TeamTask();
     task.setName(subject);
@@ -47,6 +49,7 @@ public class TeamTaskProjectServiceImpl extends TeamTaskServiceImpl
     task.setStatus("new");
     task.setPriority("normal");
     project.addTeamTaskListItem(task);
+    teamTaskRepo.save(task);
     return task;
   }
 

@@ -224,15 +224,26 @@ public class ProjectServiceImpl implements ProjectService {
   public TeamTask createTask(
       TaskTemplate taskTemplate, Project project, Set<TaskTemplate> taskTemplateSet) {
 
-    if (!ObjectUtils.isEmpty(project.getTeamTaskList())
-        && project.getTeamTaskList().stream()
-            .anyMatch(it -> it.getName().equals(taskTemplate.getName()))) {
-      return null;
+    if (!ObjectUtils.isEmpty(project.getTeamTaskList())) {
+      for (TeamTask teamTask : project.getTeamTaskList()) {
+        if (teamTask.getName().equals(taskTemplate.getName())) {
+          return teamTask;
+        }
+      }
     }
+    //        && project.getTeamTaskList().stream()
+    //            .anyMatch(it -> it.getName().equals(taskTemplate.getName()))) {
+    //      return project.getTeamTaskList().stream().filter(it ->
+    // it.getName().equals(taskTemplate.getName())).findFirst().orElseGet(null);
+    //    }
     TeamTask task =
         teamTaskProjectService.create(
             taskTemplate.getName(), project, taskTemplate.getAssignedTo());
     task.setDescription(taskTemplate.getDescription());
+    if (taskTemplate.getTeamTaskCategory() != null) {
+      task.setTeamTaskCategory(taskTemplate.getTeamTaskCategory());
+      project.addTeamTaskCategorySetItem(taskTemplate.getTeamTaskCategory());
+    }
 
     TaskTemplate parentTaskTemplate = taskTemplate.getParentTaskTemplate();
 
@@ -243,7 +254,6 @@ public class ProjectServiceImpl implements ProjectService {
       task.setParentTask(parentTask);
       return task;
     }
-
     return task;
   }
 }
