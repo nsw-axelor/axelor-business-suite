@@ -2,6 +2,7 @@ package com.axelor.apps.project.service;
 
 import com.axelor.apps.project.db.TaskTemplate;
 import com.axelor.common.ObjectUtils;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -11,7 +12,7 @@ public class TaskTemplateServiceImpl implements TaskTemplateService {
   public Set<TaskTemplate> getNewAddedTaskTemplate(
       Set<TaskTemplate> oldTaskTemplateSet, Set<TaskTemplate> taskTemplateSet) {
     return ObjectUtils.isEmpty(oldTaskTemplateSet)
-        ? taskTemplateSet
+        ? new HashSet<>(taskTemplateSet)
         : taskTemplateSet.stream()
             .filter(it -> !oldTaskTemplateSet.contains(it))
             .collect(Collectors.toSet());

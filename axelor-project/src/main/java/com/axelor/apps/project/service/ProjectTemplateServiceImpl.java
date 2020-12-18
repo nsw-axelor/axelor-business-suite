@@ -5,6 +5,7 @@ import com.axelor.apps.project.db.TaskTemplate;
 import com.axelor.apps.project.db.repo.ProjectTemplateRepository;
 import com.axelor.common.ObjectUtils;
 import com.google.inject.Inject;
+import java.util.HashSet;
 import java.util.Set;
 
 public class ProjectTemplateServiceImpl implements ProjectTemplateService {
@@ -27,7 +28,7 @@ public class ProjectTemplateServiceImpl implements ProjectTemplateService {
     }
     Set<TaskTemplate> newTaskTemplateSet =
         projectTemplate.getId() == null
-            ? taskTemplateSet
+            ? new HashSet<>(taskTemplateSet)
             : taskTemplateService.getNewAddedTaskTemplate(
                 projectTemplateRepo.find(projectTemplate.getId()).getTaskTemplateSet(),
                 taskTemplateSet);

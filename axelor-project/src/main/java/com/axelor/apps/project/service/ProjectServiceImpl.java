@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -172,34 +171,50 @@ public class ProjectServiceImpl implements ProjectService {
       projectRepository.save(project);
 
       Set<TaskTemplate> taskTemplateSet = projectTemplate.getTaskTemplateSet();
-      List<TaskTemplate> aList = new ArrayList<TaskTemplate>(taskTemplateSet);
-      aList.forEach(
+      List<TaskTemplate> taskTemplateList = new ArrayList<TaskTemplate>(taskTemplateSet);
+      taskTemplateList.forEach(
           it -> {
-            System.err.println(it.getId() + " : " + it.getParentTaskTemplate());
-          });
-      Comparator<TaskTemplate> taskTemplateComparator =
-          (TaskTemplate t1, TaskTemplate t2) -> {
-            System.err.println(
-                "test.........." + t1 == null || t1.getParentTaskTemplate() == null || t2 == null
-                    ? 1
-                    : t1.getParentTaskTemplate().getId().equals(t2.getId()) ? -1 : 1);
-            return t1.getParentTaskTemplate() == null || t2 == null
-                ? 1
-                : t1.getParentTaskTemplate().getId().equals(t2.getId()) ? -1 : 1;
-          };
-      Collections.sort(aList, taskTemplateComparator);
-
-      aList.forEach(
-          it -> {
-            System.err.println(it.getId() + " : " + it.getParentTaskTemplate());
+            System.err.println(it.getName() + " : " + it.getParentTaskTemplate());
           });
 
-      if (taskTemplateSet != null) {
-        Iterator<TaskTemplate> taskTemplateItr = taskTemplateSet.iterator();
+      Collections.sort(
+          taskTemplateList,
+          new Comparator<TaskTemplate>() {
 
-        while (taskTemplateItr.hasNext()) {
-          createTask(taskTemplateItr.next(), project, taskTemplateSet);
+            @Override
+            public int compare(TaskTemplate taskTemplatet1, TaskTemplate taskTemplate2) {
+              return taskTemplatet1.getParentTaskTemplate() == null || taskTemplate2 == null
+                  ? 1
+                  : taskTemplatet1.getParentTaskTemplate().equals(taskTemplate2) ? -1 : 1;
+            }
+          });
+
+      //      taskTemplateList.sort(
+      //          new Comparator<TaskTemplate>() {
+      //            @Override
+      //            public int compare(TaskTemplate t1, TaskTemplate t2) {
+      //              return t1 == null || t1.getParentTaskTemplate() == null || t2 == null
+      //                  ? -1
+      //                  : t1.getParentTaskTemplate().getId().equals(t2.getId()) ? 1 : -1;
+      //            }
+      //          });
+
+      taskTemplateList.forEach(
+          it -> {
+            System.err.println(it.getName() + " : " + it.getParentTaskTemplate());
+          });
+
+      if (taskTemplateList != null) {
+        for (TaskTemplate taskTemplate : taskTemplateList) {
+          createTask(taskTemplate, project, taskTemplateSet);
         }
+
+        //      if (taskTemplateSet != null) {
+        //        Iterator<TaskTemplate> taskTemplateItr = taskTemplateSet.iterator();
+        //
+        //        while (taskTemplateItr.hasNext()) {
+        //          createTask(taskTemplateItr.next(), project, taskTemplateSet);
+        //        }
       }
 
       return project;
@@ -226,7 +241,7 @@ public class ProjectServiceImpl implements ProjectService {
       TeamTask parentTask =
           this.createTask(taskTemplate.getParentTaskTemplate(), project, taskTemplateSet);
       task.setParentTask(parentTask);
-      return parentTask;
+      return task;
     }
 
     return task;
