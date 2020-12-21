@@ -123,7 +123,15 @@ public class ProjectTemplateController {
   }
 
   public void addParentTaskTemplate(ActionRequest request, ActionResponse response) {
+    // System.err.println(request.getRawContext().get("taskTemplateSet"));
     ProjectTemplate projectTemplate = request.getContext().asType(ProjectTemplate.class);
+    if (projectTemplate.getTaskTemplateSet() != null) {
+      projectTemplate.getTaskTemplateSet().stream()
+          .forEach(
+              it -> {
+                System.err.println(it + " ID: " + it.getId() + " Name: " + it.getName());
+              });
+    }
     projectTemplate =
         Beans.get(ProjectTemplateService.class).addParentTaskTemplate(projectTemplate);
     response.setValue("taskTemplateSet", projectTemplate.getTaskTemplateSet());

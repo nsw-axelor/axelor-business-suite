@@ -35,6 +35,7 @@ public class ProjectTemplateServiceImpl implements ProjectTemplateService {
     if (ObjectUtils.isEmpty(newTaskTemplateSet)) {
       return projectTemplate;
     }
+    // newTaskTemplateSet = new HashSet<TaskTemplate>(taskTemplateSet);
     projectTemplate.setTaskTemplateSet(
         taskTemplateService.getParentTaskTemplateFromTaskTemplates(
             newTaskTemplateSet, taskTemplateSet));
