@@ -22,6 +22,7 @@ import com.axelor.apps.base.db.Partner;
 import com.axelor.apps.project.db.Project;
 import com.axelor.apps.project.db.ProjectTemplate;
 import com.axelor.apps.project.db.TaskTemplate;
+import com.axelor.apps.project.db.TeamTaskCategory;
 import com.axelor.apps.project.db.Wiki;
 import com.axelor.apps.project.db.repo.ProjectRepository;
 import com.axelor.apps.project.db.repo.WikiRepository;
@@ -240,18 +241,16 @@ public class ProjectServiceImpl implements ProjectService {
         teamTaskProjectService.create(
             taskTemplate.getName(), project, taskTemplate.getAssignedTo());
     task.setDescription(taskTemplate.getDescription());
-    if (taskTemplate.getTeamTaskCategory() != null) {
-      task.setTeamTaskCategory(taskTemplate.getTeamTaskCategory());
-      project.addTeamTaskCategorySetItem(taskTemplate.getTeamTaskCategory());
+    TeamTaskCategory teamTaskCategory = taskTemplate.getTeamTaskCategory();
+    if (teamTaskCategory != null) {
+      task.setTeamTaskCategory(teamTaskCategory);
+      project.addTeamTaskCategorySetItem(teamTaskCategory);
     }
 
     TaskTemplate parentTaskTemplate = taskTemplate.getParentTaskTemplate();
 
     if (parentTaskTemplate != null && taskTemplateSet.contains(parentTaskTemplate)) {
-
-      TeamTask parentTask =
-          this.createTask(taskTemplate.getParentTaskTemplate(), project, taskTemplateSet);
-      task.setParentTask(parentTask);
+      task.setParentTask(this.createTask(parentTaskTemplate, project, taskTemplateSet));
       return task;
     }
     return task;
