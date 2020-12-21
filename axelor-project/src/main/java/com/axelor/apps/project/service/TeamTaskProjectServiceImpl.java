@@ -84,4 +84,10 @@ public class TeamTaskProjectServiceImpl extends TeamTaskServiceImpl
     nextTeamTask.setBudgetedTime(teamTask.getBudgetedTime());
     nextTeamTask.setCurrency(teamTask.getCurrency());
   }
+
+  @Override
+  @Transactional
+  public void deleteTeamTask(TeamTask teamTask) {
+    teamTaskRepo.remove(teamTask);
+  }
 }
