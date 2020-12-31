@@ -952,7 +952,7 @@ CONCAT(SalemanPartner.name, ' ', SalemanPartner.first_name) as "SalemanName", Sa
 SalemanEmailAddress.address as "SalemanEmail", SaleConfig.display_saleman_on_printing as "DisplaySaleman", 
 SaleOrder.shipment_date as "ShipmentDate", SaleConfig.sale_order_client_box as "ClientBox", 
 SaleConfig.sale_order_legal_note as "LegalNote", SaleConfig.display_del_cond_on_printing as "DisplayDeliveryCondition", 
-Company.name as "CompanyName", coalesce(MetaFileTN.file_path, MetaFile.file_path) as logo_path,
+Company.name as "CompanyName", MetaFile.file_path as logo_path,
 Company.height as "logo_height", Company.width as "logo_width",
 ClientPartner.partner_seq as "CustomerCode", ClientPartner.partner_type_select, ClientPartner.name as "ClientPartName",
 ClientPartner.first_name as "ClientPartFirstName", ClientPartner.title_select as "ClientTitle", 
@@ -1011,8 +1011,6 @@ left outer join base_duration as Duration on (SaleOrder.duration = Duration.id)
 left outer join base_bank as Bank on (BankDetail.bank = Bank.id)
 left outer join base_bank_address as BankAddress on (BankDetail.bank_address = BankAddress.id)
 left outer join meta_file as SignatureFile on SalespersonUser.electronic_signature = SignatureFile.id
-left outer join base_trading_name as TradingName on (TradingName.id = SaleOrder.trading_name)
-left outer join meta_file as MetaFileTN on (MetaFileTN.id = TradingName.logo)
 where SaleOrder.id = ?]]></xml-property>
         </oda-data-set>
         <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="OrderLineDS" id="3678">

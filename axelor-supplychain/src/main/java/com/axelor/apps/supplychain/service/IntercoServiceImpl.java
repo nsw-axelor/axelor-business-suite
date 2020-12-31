@@ -162,7 +162,6 @@ public class IntercoServiceImpl implements IntercoService {
     purchaseOrder.setDeliveryDate(saleOrder.getDeliveryDate());
     purchaseOrder.setOrderDate(saleOrder.getCreationDate());
     purchaseOrder.setPriceList(saleOrder.getPriceList());
-    purchaseOrder.setTradingName(saleOrder.getTradingName());
     purchaseOrder.setPurchaseOrderLineList(new ArrayList<>());
 
     purchaseOrder.setPrintingSettings(
@@ -170,7 +169,6 @@ public class IntercoServiceImpl implements IntercoService {
 
     purchaseOrder.setStatusSelect(PurchaseOrderRepository.STATUS_DRAFT);
     purchaseOrder.setSupplierPartner(saleOrder.getCompany().getPartner());
-    purchaseOrder.setTradingName(saleOrder.getTradingName());
 
     // in ati
     purchaseOrder.setInAti(saleOrder.getInAti());

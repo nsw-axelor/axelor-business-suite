@@ -137,7 +137,7 @@ public class SaleOrderPurchaseServiceImpl implements SaleOrderPurchaseService {
             Beans.get(PartnerPriceListService.class)
                 .getDefaultPriceList(supplierPartner, PriceListRepository.TYPE_PURCHASE),
             supplierPartner,
-            saleOrder.getTradingName());
+            null);
 
     purchaseOrder.setGeneratedSaleOrderId(saleOrder.getId());
 

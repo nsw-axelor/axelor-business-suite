@@ -294,7 +294,6 @@ public class SaleOrderStockServiceImpl implements SaleOrderStockService {
     stockMove.setOriginTypeSelect(StockMoveRepository.ORIGIN_SALE_ORDER);
     stockMove.setOrigin(saleOrder.getSaleOrderSeq());
     stockMove.setStockMoveLineList(new ArrayList<>());
-    stockMove.setTradingName(saleOrder.getTradingName());
     stockMove.setSpecificPackage(saleOrder.getSpecificPackage());
     stockMove.setNote(saleOrder.getDeliveryComments());
     stockMove.setPickingOrderComments(saleOrder.getPickingOrderComments());
