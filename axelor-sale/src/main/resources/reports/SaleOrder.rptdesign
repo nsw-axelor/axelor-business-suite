@@ -478,11 +478,6 @@ reportContext.getDesignHandle().findMasterPage("Simple MasterPage").setProperty(
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">51</property>
-                        <property name="name">versionNumber</property>
-                        <property name="dataType">integer</property>
-                    </structure>
-                    <structure>
                         <property name="position">52</property>
                         <property name="name">logoPosition</property>
                         <property name="dataType">integer</property>
@@ -857,12 +852,6 @@ reportContext.getDesignHandle().findMasterPage("Simple MasterPage").setProperty(
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="position">51</property>
-                    <property name="name">versionNumber</property>
-                    <property name="nativeName">versionNumber</property>
-                    <property name="dataType">integer</property>
-                </structure>
-                <structure>
                     <property name="position">52</property>
                     <property name="name">logoPosition</property>
                     <property name="nativeName">logoPosition</property>
@@ -970,7 +959,6 @@ SaleOrder.hide_discount as "hideDiscount", SaleConfig.display_product_code_on_pr
 SaleConfig.display_tax_detail_on_printing as "displayTaxDetailOnPrinting",
 SaleConfig.display_estim_deliv_date_on_printing as "displayEstimDelivDateOnPrinting", 
 SaleOrder.sale_order_type_select,SaleOrder.status_select, SaleOrder.specific_notes,
-SaleOrder.version_number as "versionNumber",
 PrintingSettings.logo_position_select as "logoPosition",
 SignatureFile.file_path as "salesperson_signature_path",
 SaleOrder.periodicity_type_select,
@@ -2262,13 +2250,6 @@ from base_app_base]]></xml-property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">versionNumber</property>
-                    <text-property name="displayName">Version Number</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["versionNumber"]</expression>
-                    <property name="dataType">integer</property>
-                    <property name="allowExport">true</property>
-                </structure>
-                <structure>
                     <property name="name">salesperson_signature_path</property>
                     <text-property name="displayName">salesperson_signature_path</text-property>
                     <expression name="expression" type="javascript">dataSetRow["salesperson_signature_path"]</expression>
@@ -2530,9 +2511,7 @@ from base_app_base]]></xml-property>
                             </structure>
                         </list-property>
                         <property name="contentType">html</property>
-                        <text-property name="content"><![CDATA[<VALUE-OF>row["translation"]</VALUE-OF> <VALUE-OF format="^">" "</VALUE-OF> <VALUE-OF>row._outer["saleOrderSeq"]</VALUE-OF> <VALUE-OF>if(row._outer["versionNumber"] > 1) {
-	"-"+row._outer["versionNumber"]
-}</VALUE-OF>]]></text-property>
+                        <text-property name="content"><![CDATA[<VALUE-OF>row["translation"]</VALUE-OF> <VALUE-OF format="^">" "</VALUE-OF> <VALUE-OF>row._outer["saleOrderSeq"]</VALUE-OF>]]></text-property>
                     </text>
                 </cell>
                 <cell id="3367"/>

@@ -270,7 +270,6 @@
 	      <field name="priceList" readonlyIf="saleOrderLineList.length > 0 || statusSelect >= 2" onChange="action-sale-order-record-hide-discount" onSelect="action-sale-order-method-price-list-domain" canEdit="false" form-view="price-list-form" grid-view="price-list-grid" hideIf="company == null" colSpan="3"/>
 	       <field name="clientPartner" required="true"  hideIf="company == null" readonlyIf="statusSelect > 1" onChange="action-sale-order-group-client-partner-change,action-sale-order-record-compute-end-of-validity-date" onSelect="action-sale-order-method-set-client-partner-domain" form-view="partner-form" grid-view="partner-grid" colSpan="3"/>
 	      <field name="contactPartner" colSpan="3" hideIf="company == null" onChange="action-record-so-contact-partner-change" onSelect="action-sale-order-domain-on-contact-partner" domain="self.isContact = true" canEdit="false" form-view="partner-contact-form" grid-view="partner-contact-grid"/>
-	      <field if="__config__.app.getApp('sale').getManageSaleOrderVersion()" name="versionNumber" colSpan="3"/>
 	      <field if="__config__.app.isApp('supplychain')" if-module="axelor-supplychain" colSpan="3" name="directOrderLocation" onChange="action-sale-order-record-direct-order-location-onchange" widget="boolean-switch"/>
 	      <panel name="otherInfoPanel" colSpan="3">
 	        <field name="inAti" hidden="true" readonlyIf="saleOrderLineList.length > 0 || statusSelect &gt;= 2" onChange="action-sale-order-attrs-in-ati" widget="boolean-switch"/>
@@ -386,7 +385,6 @@
 	    <button name="addPackBtn" title="Add a pack" onClick="save,action-sale-order-view-add-pack" if="__config__.app.getApp('sale')?.enablePackManagement" hideIf="clientPartner == null || [2,4,5].indexOf(statusSelect) != -1 || (statusSelect == 3 &amp;&amp; !orderBeingEdited)"/>
 	    <button name="finalizeBtn" title="Finalize" showIf="statusSelect == 1" colSpan="12" onClick="action-group-sale-order-finalize-quotation"/>
 	    <button if="(__config__.app.isApp('supplychain') &amp;&amp; __config__.app.getApp('supplychain')?.allowCompleteManuallySaleOrder) || (!__config__.app.isApp('supplychain'))" name="completeManuallySaleOrderBtn" title="Complete manually sale order" showIf="statusSelect == 3" prompt="Warning, a completed order can't be changed anymore, do you want to continue?" colSpan="12" onClick="save,action-sale-order-method-complete-sale-order"/>
-	    <button if="__config__.app.getApp('sale').getManageSaleOrderVersion()" name="newVersionBtn" title="New version" showIf="statusSelect == 2" colSpan="12" onClick="save,action-sale-record-newVersion,save"/>
 	    <button if="__config__.app.getApp('sale').allowPendingOrderModification" name="editOrderBtn" title="Edit order" showIf="statusSelect == 3 &amp;&amp; !orderBeingEdited" colSpan="12" onClick="action-sale-order-method-edit-order"/>
 	    <button name="validateChangesBtn" title="Validate changes" showIf="statusSelect == 3 &amp;&amp; orderBeingEdited" colSpan="12" onClick="action-group-sale-order-validate-changes"/>
 	    <button if="__config__.app.getApp('supplychain')?.custStockMoveMgtOnSO &amp;&amp; !__config__.app.getApp('supplychain').customerStockMoveGenerationAuto" name="generateCustomerStockMoveBtn" title="Generate customer deliveries" showIf="statusSelect == 3 &amp;&amp; !orderBeingEdited" readonlyIf="!saleOrderLineList || !saleOrderLineList.length" colSpan="12" onClick="save, action-supplychain-sale-order-create-stock-move"/>
@@ -1080,12 +1078,6 @@
 	<action-method name="action-sale-order-method-notify-stock-move-created">
 		<call class="com.axelor.apps.supplychain.web.SaleOrderController" method="notifyStockMoveCreated"/>
 	</action-method>
-	
-    <action-record name="action-sale-record-newVersion" model="com.axelor.apps.sale.db.SaleOrder">
-    	<field name="statusSelect" expr="eval: 1"/>
-    	<field name="deliveryState" expr="eval: 1"/>
-    	<field name="versionNumber" expr="eval: versionNumber + 1"/>
-    </action-record>
 
     <action-view name="action-open-sale-order-merge-form" title="Merge sale orders" model="com.axelor.apps.base.db.Wizard">
 	    <view type="form" name="sale-order-merge-form"/>
@@ -1217,7 +1209,6 @@
 	<search-filters name="sale-order-filters" model="com.axelor.apps.sale.db.SaleOrder" title="Sales Order filters">
 		<field name="company" hidden="true" if="!__config__.app.getApp('base').getEnableMultiCompany()"/>
 		<field name="saleOrderTypeSelect" hidden="true" if="!(__config__.app.isApp('supplychain') &amp;&amp; __config__.app.getApp('supplychain').getAllowSusbcriptionSaleOrder())"/>
-		<field name="versionNumber" hidden="true" if="!__config__.app.getApp('sale').getManageSaleOrderVersion()"/>
 		<field name="project" hidden="true" if="!(__config__.app.isApp('business-project') &amp;&amp; __config__.app.getApp('business-project').getGenerateProjectOrder())"/>
         <field name="toInvoiceViaTask" hidden="true" if="!(__config__.app.isApp('business-project') &amp;&amp; __config__.app.getApp('business-project').getGenerateProjectOrder())"/>
         <field name="timetableTemplate" hidden="true" if="!(__config__.app.isApp('supplychain') &amp;&amp; __config__.app.getApp('supplychain').getAllowTimetableInvoicing())"/>

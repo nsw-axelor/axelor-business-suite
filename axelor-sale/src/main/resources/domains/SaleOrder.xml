@@ -77,7 +77,6 @@
     <many-to-one name="confirmedByUser" ref="com.axelor.auth.db.User" readonly="true" title="Confirmed by"/>
     
     <boolean name="template" title="Template" hidden="true"/>
-    <integer name="versionNumber" title="Version Number" readonly="true" default="1"/>
     <many-to-one name="cancelReason" title="Cancel reason" ref="com.axelor.apps.base.db.CancelReason"/>
 	<string name="cancelReasonStr" title="Cancel Reason" large="true"/>
     <many-to-one name="templateUser" ref="com.axelor.auth.db.User" title="Template created by" readonly="true"/>
