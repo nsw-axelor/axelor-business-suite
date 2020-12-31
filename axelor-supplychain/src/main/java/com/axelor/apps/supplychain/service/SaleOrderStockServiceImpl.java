@@ -259,12 +259,9 @@ public class SaleOrderStockServiceImpl implements SaleOrderStockService {
   public StockMove createStockMove(
       SaleOrder saleOrder, Company company, LocalDate estimatedDeliveryDate)
       throws AxelorException {
-    StockLocation toStockLocation = saleOrder.getToStockLocation();
-    if (toStockLocation == null) {
-      toStockLocation =
-          partnerStockSettingsService.getDefaultExternalStockLocation(
-              saleOrder.getClientPartner(), company);
-    }
+    StockLocation toStockLocation =
+        partnerStockSettingsService.getDefaultExternalStockLocation(
+            saleOrder.getClientPartner(), company);
     if (toStockLocation == null) {
       toStockLocation =
           stockConfigService.getCustomerVirtualStockLocation(
