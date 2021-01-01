@@ -308,7 +308,6 @@
 	      <field name="specificPackage" colSpan="12"/>
 	      <field name="stockLocation" canEdit="false" onSelect="action-sale-order-attrs-set-stock-location-domain" form-view="stock-location-form" grid-view="stock-location-grid"/>
 		  <field name="deliveryDate" onChange="action-sale-order-method-fill-sale-order-lines-estimated-date"/>
-	      <field name="incoterm" canEdit="false" form-view="incoterm-form" grid-view="incoterm-grid"/>
 	      <field name="isNeedingConformityCertificate" colSpan="3"/>
 	      <field name="isIspmRequired" readonly="true" colSpan="3"/>
 	      <button name="customerDeliveriesDetailsBtn" title="Customer deliveries details" showIf="statusSelect >= 3" colSpan="6" onClick="action-view-show-stock-move-line"/>
@@ -1223,7 +1222,6 @@
 	    <field name="createdByInterco" hidden="true" if="!__config__.app.isApp('supplychain')"/>
 	    <field name="specificPackage" hidden="true" if="!__config__.app.isApp('supplychain')"/>
 	    <field name="deliveryDate" hidden="true" if="!__config__.app.isApp('supplychain')"/>
-	    <field name="incoterm" hidden="true" if="!__config__.app.isApp('supplychain')"/>
 	    <field name="isNeedingConformityCertificate" hidden="true" if="!__config__.app.isApp('supplychain')"/>
 	    <field name="isIspmRequired" hidden="true" if="!__config__.app.isApp('supplychain')"/>
 	    <field name="deliveryComments" hidden="true" if="!__config__.app.isApp('supplychain')"/>
@@ -1383,7 +1381,6 @@
 
 	<action-record name="action-sale-record-update-info-company" model="com.axelor.apps.sale.db.SaleOrder">
 		<field name="printingSettings" expr="eval: company?.printingSettings"/>
-		<field name="incoterm" expr="eval: __repo__(PartnerStockSettings).all().filter('self.company = ? AND self.partner = ?', company, clientPartner).fetchOne()?.incoterm" if="company != null &amp;&amp; clientPartner != null"/>
         <field name="creationDate" expr="eval:__config__.app.getTodayDate(company)" if="company"/>
 	</action-record>
 

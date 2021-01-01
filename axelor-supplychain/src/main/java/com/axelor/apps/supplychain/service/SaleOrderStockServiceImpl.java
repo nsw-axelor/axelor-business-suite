@@ -282,7 +282,7 @@ public class SaleOrderStockServiceImpl implements SaleOrderStockService {
             null,
             null,
             null,
-            saleOrder.getIncoterm(),
+            null,
             StockMoveRepository.TYPE_OUTGOING);
 
     stockMove.setToAddressStr(saleOrder.getDeliveryAddressStr());
