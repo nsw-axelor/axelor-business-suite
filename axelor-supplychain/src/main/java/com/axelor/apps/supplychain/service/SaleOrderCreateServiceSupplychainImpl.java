@@ -177,8 +177,6 @@ public class SaleOrderCreateServiceSupplychainImpl extends SaleOrderCreateServic
           this.accountConfigService.getAccountConfig(company).getDefPaymentCondition());
     }
 
-    saleOrder.setFreightCarrierMode(clientPartner.getFreightCarrierMode());
-
     return saleOrder;
   }
 

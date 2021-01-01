@@ -124,10 +124,6 @@ public class ProjectBusinessServiceImpl extends ProjectServiceImpl
 
     AppSupplychain appSupplychain = Beans.get(AppSupplychainService.class).getAppSupplychain();
     if (appSupplychain != null) {
-      order.setFreightCarrierMode(clientPartner.getFreightCarrierMode());
-      if (clientPartner.getFreightCarrierMode() != null) {
-        order.setCarrierPartner(clientPartner.getFreightCarrierMode().getCarrierPartner());
-      }
       Boolean interco =
           appSupplychain.getIntercoFromSale()
               && !order.getCreatedByInterco()
