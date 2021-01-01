@@ -280,7 +280,7 @@ public class SaleOrderStockServiceImpl implements SaleOrderStockService {
             saleOrder.getDescription(),
             null,
             null,
-            saleOrder.getCarrierPartner(),
+            null,
             saleOrder.getForwarderPartner(),
             saleOrder.getIncoterm(),
             StockMoveRepository.TYPE_OUTGOING);
