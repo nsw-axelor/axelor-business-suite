@@ -28,8 +28,6 @@
         <integer name="standardDelay" title="Standard delay (days)" default="0"  />
         <one-to-many name="stockMoveList" ref="com.axelor.apps.stock.db.StockMove" title="Stock moves" />
 
-      <boolean name="isIspmRequired" title="Is ISPM 15 required"/>
-
         <extra-code>
             <![CDATA[
                 // INVOICE

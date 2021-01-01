@@ -284,7 +284,7 @@
 	        </field>
 	      </panel>
 	      <panel name="deliveryAddressPanel" stacked="true">
-	        <field name="deliveryAddress" hideIf="$readonly() || (statusSelect > 1 &amp;&amp; !orderBeingEdited)" canNew="true" canEdit="false" onChange="action-sale-order-method-address-str,action-sale-order-attrs-set-is-ispm-required" onSelect="action-sale-order-attrs-domain-delivery-address" form-view="address-partner-address-form" grid-view="address-grid"/>
+	        <field name="deliveryAddress" hideIf="$readonly() || (statusSelect > 1 &amp;&amp; !orderBeingEdited)" canNew="true" canEdit="false" onChange="action-sale-order-method-address-str" onSelect="action-sale-order-attrs-domain-delivery-address" form-view="address-partner-address-form" grid-view="address-grid"/>
 	        <field name="deliveryAddressStr" readonlyIf="statusSelect > 1 &amp;&amp; !orderBeingEdited" height="5">
 	          <viewer><![CDATA[{{record.deliveryAddressStr}}]]></viewer>
 	        </field>
@@ -308,7 +308,6 @@
 	      <field name="specificPackage" colSpan="12"/>
 	      <field name="stockLocation" canEdit="false" onSelect="action-sale-order-attrs-set-stock-location-domain" form-view="stock-location-form" grid-view="stock-location-grid"/>
 		  <field name="deliveryDate" onChange="action-sale-order-method-fill-sale-order-lines-estimated-date"/>
-	      <field name="isIspmRequired" readonly="true" colSpan="3"/>
 	      <button name="customerDeliveriesDetailsBtn" title="Customer deliveries details" showIf="statusSelect >= 3" colSpan="6" onClick="action-view-show-stock-move-line"/>
 	      <panel-dashlet name="customerDeliveriesPanel" title="Customer deliveries" showIf="statusSelect >= 3" colSpan="12" action="action-sale-order-view-stock-moves"/>
 	      <panel name="deliveryCommentsPanel" title="Comment to display on delivery" colSpan="12">
@@ -970,8 +969,6 @@
 		<action name="action-partner-attrs-hide-contact-partner"/>
 		<action name="action-sale-order-method-change-sale-order-line-tax" if="template"/>
 		<action name="action-sale-order-method-compute" if="template"/>
-		<action name="action-sale-order-attrs-set-is-ispm-required"
-				if="__config__.app.isApp('supplychain')"/>
 	</action-group>
 
   <action-group name="action-group-sale-order-validate-changes">
@@ -1220,7 +1217,6 @@
 	    <field name="createdByInterco" hidden="true" if="!__config__.app.isApp('supplychain')"/>
 	    <field name="specificPackage" hidden="true" if="!__config__.app.isApp('supplychain')"/>
 	    <field name="deliveryDate" hidden="true" if="!__config__.app.isApp('supplychain')"/>
-	    <field name="isIspmRequired" hidden="true" if="!__config__.app.isApp('supplychain')"/>
 	    <field name="deliveryComments" hidden="true" if="!__config__.app.isApp('supplychain')"/>
 	    <field name="pickingOrderComments" hidden="true" if="!__config__.app.isApp('supplychain')"/>
 	    <field name="productionNote" hidden="true" if="!__config__.app.isApp('production')"/>

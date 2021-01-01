@@ -191,10 +191,6 @@
 		<field name="timetableList" expr="eval: timetableList.collect{it -> it.amount = (exTaxTotal * it.percentage / 100).setScale(__config__.app.getApp('base').nbDecimalDigitForUnitPrice, java.math.RoundingMode.HALF_UP); it}" if="timetableList != null"/>
 	</action-record>
 
-    <action-attrs name="action-sale-order-attrs-set-is-ispm-required">
-    	<attribute name="value" for="isIspmRequired" expr="eval: clientPartner?.isIspmRequired || deliveryAddress?.addressL7Country?.isIspmRequired"/>
-    </action-attrs>
-
 	<action-method name="action-sale-order-method-allocate-all">
 		<call class="com.axelor.apps.supplychain.web.SaleOrderController" method="allocateAll"/>
 	</action-method>
