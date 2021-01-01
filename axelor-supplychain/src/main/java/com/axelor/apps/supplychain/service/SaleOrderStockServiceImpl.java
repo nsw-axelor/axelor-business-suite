@@ -176,14 +176,6 @@ public class SaleOrderStockServiceImpl implements SaleOrderStockService {
       stockMove.setFullySpreadOverLogisticalFormsFlag(true);
     }
 
-    boolean isNeedingConformityCertificate = saleOrder.getIsNeedingConformityCertificate();
-    stockMove.setIsNeedingConformityCertificate(isNeedingConformityCertificate);
-
-    if (isNeedingConformityCertificate) {
-      stockMove.setSignatoryUser(
-          stockConfigService.getStockConfig(stockMove.getCompany()).getSignatoryUser());
-    }
-
     SupplyChainConfig supplychainConfig =
         Beans.get(SupplyChainConfigService.class).getSupplyChainConfig(saleOrder.getCompany());
 

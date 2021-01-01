@@ -81,7 +81,6 @@ public class ProjectBusinessServiceImpl extends ProjectServiceImpl
         addressService.computeAddressStr(order.getMainInvoicingAddress()));
     order.setDeliveryAddress(partnerService.getDeliveryAddress(clientPartner));
     order.setDeliveryAddressStr(addressService.computeAddressStr(order.getDeliveryAddress()));
-    order.setIsNeedingConformityCertificate(clientPartner.getIsNeedingConformityCertificate());
     order.setCompanyBankDetails(
         Beans.get(AccountingSituationService.class)
             .getCompanySalesBankDetails(company, clientPartner));

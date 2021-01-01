@@ -308,7 +308,6 @@
 	      <field name="specificPackage" colSpan="12"/>
 	      <field name="stockLocation" canEdit="false" onSelect="action-sale-order-attrs-set-stock-location-domain" form-view="stock-location-form" grid-view="stock-location-grid"/>
 		  <field name="deliveryDate" onChange="action-sale-order-method-fill-sale-order-lines-estimated-date"/>
-	      <field name="isNeedingConformityCertificate" colSpan="3"/>
 	      <field name="isIspmRequired" readonly="true" colSpan="3"/>
 	      <button name="customerDeliveriesDetailsBtn" title="Customer deliveries details" showIf="statusSelect >= 3" colSpan="6" onClick="action-view-show-stock-move-line"/>
 	      <panel-dashlet name="customerDeliveriesPanel" title="Customer deliveries" showIf="statusSelect >= 3" colSpan="12" action="action-sale-order-view-stock-moves"/>
@@ -1140,7 +1139,6 @@
 		<field name="deliveryAddress" expr="call:com.axelor.apps.base.service.PartnerService:getDeliveryAddress(clientPartner)" if="clientPartner != null"/>
 		<field name="hideDiscount" expr="eval: priceList?.hideDiscount"/>
 		<field name="companyBankDetails" expr="call: com.axelor.apps.account.service.AccountingSituationService:getCompanySalesBankDetails(company, clientPartner)"/>
-			<field name="isNeedingConformityCertificate" expr="eval: clientPartner?.isNeedingConformityCertificate"/>
 		<field name="salespersonUser" expr="eval:__user__" if="__config__.app.getApp('sale').getSalemanSelect() == 1"/>
 		<field name="salespersonUser" expr="eval: clientPartner?.getUser()" if="__config__.app.getApp('sale').getSalemanSelect() == 2"/>
 		<field name="invoiceComments" expr="eval: clientPartner?.invoiceComments"/>
@@ -1222,7 +1220,6 @@
 	    <field name="createdByInterco" hidden="true" if="!__config__.app.isApp('supplychain')"/>
 	    <field name="specificPackage" hidden="true" if="!__config__.app.isApp('supplychain')"/>
 	    <field name="deliveryDate" hidden="true" if="!__config__.app.isApp('supplychain')"/>
-	    <field name="isNeedingConformityCertificate" hidden="true" if="!__config__.app.isApp('supplychain')"/>
 	    <field name="isIspmRequired" hidden="true" if="!__config__.app.isApp('supplychain')"/>
 	    <field name="deliveryComments" hidden="true" if="!__config__.app.isApp('supplychain')"/>
 	    <field name="pickingOrderComments" hidden="true" if="!__config__.app.isApp('supplychain')"/>
