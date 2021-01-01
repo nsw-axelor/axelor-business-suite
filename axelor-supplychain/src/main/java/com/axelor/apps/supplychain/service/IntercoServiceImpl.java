@@ -110,7 +110,6 @@ public class IntercoServiceImpl implements IntercoService {
 
     // copy delivery info
     saleOrder.setDeliveryDate(purchaseOrder.getDeliveryDate());
-    saleOrder.setShipmentMode(purchaseOrder.getShipmentMode());
     saleOrder.setFreightCarrierMode(purchaseOrder.getFreightCarrierMode());
 
     // get stock location
@@ -183,7 +182,6 @@ public class IntercoServiceImpl implements IntercoService {
     purchaseOrder.setDeliveryDate(saleOrder.getDeliveryDate());
     purchaseOrder.setStockLocation(
         Beans.get(StockLocationService.class).getDefaultReceiptStockLocation(intercoCompany));
-    purchaseOrder.setShipmentMode(saleOrder.getShipmentMode());
     purchaseOrder.setFreightCarrierMode(saleOrder.getFreightCarrierMode());
 
     // copy timetable info
