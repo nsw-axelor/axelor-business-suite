@@ -28,7 +28,6 @@
         <integer name="standardDelay" title="Standard delay (days)" default="0"  />
         <one-to-many name="stockMoveList" ref="com.axelor.apps.stock.db.StockMove" title="Stock moves" />
 
-	   	<many-to-one name="forwarderPartner" ref="com.axelor.apps.base.db.Partner" title="Forwarder" />
 		<many-to-one name="incoterm" ref="com.axelor.apps.stock.db.Incoterm" />
 
       <boolean name="isNeedingConformityCertificate" title="Is certificate of conformity required"/>
