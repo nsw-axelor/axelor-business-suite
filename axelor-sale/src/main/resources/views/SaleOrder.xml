@@ -907,6 +907,7 @@
         <action name="action-sale-order-attrs-external-reference"/>
         <action name="action-sale-order-attrs-availability"/>
         <action name="action-sale-order-group-set-defualts-from-opportunity" if="__parent__ != null &amp;&amp; __parent__?._model=='com.axelor.apps.crm.db.Opportunity'"/>
+        <action name="action-sale-order-attrs-set-defualt-project-generator-type" />
     </action-group>
 
 	<action-group name="action-sale-order-group-set-defualts-from-opportunity">
@@ -932,6 +933,7 @@
 		<action name="action-sale-order-attrs-external-reference"/>
 		<action name="action-sale-order-attrs-availability"/>
 		<action name="action-sale-order-attrs-set-required"/>
+        <action name="action-sale-order-attrs-set-defualt-project-generator-type"/>
 	</action-group>
 
 	<action-group name="action-sale-group-confirmed">
@@ -1444,6 +1446,10 @@
    <action-attrs name="action-sale-order-attrs-readonly-timetable">
     <attribute name="readonly" expr="eval: timetableList.any { it?.invoiced }" for="timetableTemplate"/>
     <attribute name="readonly" expr="eval: timetableList.any { it?.invoiced }" for="computationDate"/>
+   </action-attrs>
+   
+   <action-attrs name="action-sale-order-attrs-set-defualt-project-generator-type">
+      <attribute name="value" for="$_projectGeneratorType" expr="TASK_BY_LINE"/>
    </action-attrs>
    
 	
