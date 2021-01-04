@@ -270,6 +270,7 @@
 	      <field name="priceList" readonlyIf="saleOrderLineList.length > 0 || statusSelect >= 2" onChange="action-sale-order-record-hide-discount" onSelect="action-sale-order-method-price-list-domain" canEdit="false" form-view="price-list-form" grid-view="price-list-grid" hideIf="company == null" colSpan="4"/>
 	       <field name="clientPartner" required="true"  hideIf="company == null" readonlyIf="statusSelect > 1" onChange="action-sale-order-group-client-partner-change,action-sale-order-record-compute-end-of-validity-date" onSelect="action-sale-order-method-set-client-partner-domain" form-view="partner-form" grid-view="partner-grid" colSpan="3"/>
 	      <field name="contactPartner" colSpan="3" hideIf="company == null" onChange="action-record-so-contact-partner-change" onSelect="action-sale-order-domain-on-contact-partner" domain="self.isContact = true" canEdit="false" form-view="partner-contact-form" grid-view="partner-contact-grid"/>
+          <field name="project" canEdit="false" colSpan="3" domain="self.clientPartner = :clientPartner" if="__config__.app.isApp('business-project') &amp;&amp; __config__.app.getApp('business-project').getGenerateProjectOrder()" if-module="axelor-business-project" form-view="project-form" grid-view="project-grid"/>
 	      <panel name="otherInfoPanel" colSpan="3">
 	        <field name="inAti" hidden="true" readonlyIf="saleOrderLineList.length > 0 || statusSelect &gt;= 2" onChange="action-sale-order-attrs-in-ati" widget="boolean-switch"/>
 	        <field if="__config__.app.isApp('supplychain')" if-module="axelor-supplychain" hidden="true" colSpan="6" name="interco" widget="boolean-switch"/>
@@ -336,7 +337,6 @@
       <panel name="businessProjectPanel" hidden="true" title="Business project" if="__config__.app.isApp('business-project') &amp;&amp; __config__.app.getApp('business-project').getGenerateProjectOrder()" if-module="axelor-business-project">
         <field name="$_projectGeneratorType" title="Type of project's elements generated" x-enum-type="com.axelor.apps.project.db.ProjectGeneratorType"/>
         <field name="$_elementStartDate" title="Start date" widget="date-time" type="datetime"/>
-        <field name="project" canEdit="false" domain="self.clientPartner = :clientPartner" form-view="project-form" grid-view="project-grid"/>
         <field name="toInvoiceViaTask" hidden="true" showIf="$_projectGeneratorType == 'TASK_BY_LINE' || $_projectGeneratorType == 'TASK_TEMPLATE'"/>
         <panel name="projectDetailsPanel" colSpan="12">
           <button name="updateLinesBtn" title="Update lines with selected project" onClick="save,action-business-project-sale-order-method-update-lines,save" readonlyIf="!project"/>
