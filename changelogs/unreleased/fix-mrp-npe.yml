@@ -1,0 +1,3 @@
+---
+title: "MRP: fix null pointer exception when running calculation on missing procurement method."
+type: fix
