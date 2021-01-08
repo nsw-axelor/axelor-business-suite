@@ -19,39 +19,20 @@ package com.axelor.apps.project.service;
 
 import com.axelor.apps.project.db.TaskTemplate;
 import com.axelor.common.ObjectUtils;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class TaskTemplateServiceImpl implements TaskTemplateService {
 
   @Override
-  public Set<TaskTemplate> getNewAddedTaskTemplate(
+  public boolean isNewTaskTemplateAdded(
       Set<TaskTemplate> oldTaskTemplateSet, Set<TaskTemplate> taskTemplateSet) {
     return ObjectUtils.isEmpty(oldTaskTemplateSet)
-        ? new HashSet<>(taskTemplateSet)
-        : taskTemplateSet.stream()
-            .filter(it -> !oldTaskTemplateSet.contains(it))
-            .collect(Collectors.toSet());
+        ? true
+        : taskTemplateSet.stream().anyMatch(it -> !oldTaskTemplateSet.contains(it));
   }
 
   @Override
-  public Set<TaskTemplate> getParentTaskTemplateFromTaskTemplates(
-      Set<TaskTemplate> newTaskTemplateSet, Set<TaskTemplate> taskTemplateSet) {
-    for (TaskTemplate taskTemplate : newTaskTemplateSet) {
-      taskTemplateSet.addAll(
-          this.getParentTaskTemplateFromTaskTemplate(
-              taskTemplate.getParentTaskTemplate(), taskTemplateSet));
-    }
-    //    newTaskTemplateSet.stream().forEach( it -> {
-    //      taskTemplateSet.addAll(
-    //        this.getParentTaskTemplateFromTaskTemplate(
-    //            it.getParentTaskTemplate(), taskTemplateSet));
-    //    });
-    return taskTemplateSet;
-  }
-
-  private Set<TaskTemplate> getParentTaskTemplateFromTaskTemplate(
+  public Set<TaskTemplate> getParentTaskTemplateFromTaskTemplate(
       TaskTemplate taskTemplate, Set<TaskTemplate> taskTemplateSet) {
     if (taskTemplate == null || taskTemplateSet.contains(taskTemplate)) {
       return taskTemplateSet;

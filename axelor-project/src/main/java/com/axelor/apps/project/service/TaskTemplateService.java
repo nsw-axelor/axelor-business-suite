@@ -22,9 +22,9 @@ import java.util.Set;
 
 public interface TaskTemplateService {
 
-  Set<TaskTemplate> getNewAddedTaskTemplate(
+  public boolean isNewTaskTemplateAdded(
       Set<TaskTemplate> oldTaskTemplateSet, Set<TaskTemplate> taskTemplateSet);
 
-  Set<TaskTemplate> getParentTaskTemplateFromTaskTemplates(
-      Set<TaskTemplate> newTaskTemplateSet, Set<TaskTemplate> taskTemplateSet);
+  public Set<TaskTemplate> getParentTaskTemplateFromTaskTemplate(
+      TaskTemplate taskTemplate, Set<TaskTemplate> taskTemplateSet);
 }

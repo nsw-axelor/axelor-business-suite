@@ -32,7 +32,7 @@
 
 		<panel-tabs name="mainPanelTab">
 			<panel title="Task template" name="taskPanel">
-				<field name="taskTemplateSet" widget="TagSelect" colSpan="12" onChange="action-project-template-method-add-parent-task-template"/>
+				<field name="taskTemplateSet" widget="TagSelect" canNew="false" canEdit="false" colSpan="12" onChange="action-project-template-method-add-parent-task-template,save"/>
 			</panel>
 
 			<panel title="Members" name="membersPanel">

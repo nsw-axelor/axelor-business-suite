@@ -23,22 +23,19 @@ public class ProjectTemplateServiceImpl implements ProjectTemplateService {
   @Override
   public ProjectTemplate addParentTaskTemplate(ProjectTemplate projectTemplate) {
     Set<TaskTemplate> taskTemplateSet = projectTemplate.getTaskTemplateSet();
-    if (ObjectUtils.isEmpty(taskTemplateSet)) {
-      return projectTemplate;
-    }
-    Set<TaskTemplate> newTaskTemplateSet =
-        projectTemplate.getId() == null
-            ? new HashSet<>(taskTemplateSet)
-            : taskTemplateService.getNewAddedTaskTemplate(
+    if (ObjectUtils.isEmpty(taskTemplateSet)
+        || (projectTemplate.getId() != null
+            && !taskTemplateService.isNewTaskTemplateAdded(
                 projectTemplateRepo.find(projectTemplate.getId()).getTaskTemplateSet(),
-                taskTemplateSet);
-    if (ObjectUtils.isEmpty(newTaskTemplateSet)) {
+                taskTemplateSet))) {
       return projectTemplate;
     }
-    // newTaskTemplateSet = new HashSet<TaskTemplate>(taskTemplateSet);
-    projectTemplate.setTaskTemplateSet(
-        taskTemplateService.getParentTaskTemplateFromTaskTemplates(
-            newTaskTemplateSet, taskTemplateSet));
+
+    for (TaskTemplate taskTemplate : new HashSet<>(taskTemplateSet)) {
+      taskTemplateSet.addAll(
+          taskTemplateService.getParentTaskTemplateFromTaskTemplate(
+              taskTemplate.getParentTaskTemplate(), taskTemplateSet));
+    }
     return projectTemplate;
   }
 }

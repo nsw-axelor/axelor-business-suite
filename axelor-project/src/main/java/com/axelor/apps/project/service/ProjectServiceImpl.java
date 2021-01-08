@@ -173,11 +173,6 @@ public class ProjectServiceImpl implements ProjectService {
 
       Set<TaskTemplate> taskTemplateSet = projectTemplate.getTaskTemplateSet();
       List<TaskTemplate> taskTemplateList = new ArrayList<TaskTemplate>(taskTemplateSet);
-      taskTemplateList.forEach(
-          it -> {
-            System.err.println(it.getName() + " : " + it.getParentTaskTemplate());
-          });
-
       Collections.sort(
           taskTemplateList,
           new Comparator<TaskTemplate>() {
@@ -190,32 +185,10 @@ public class ProjectServiceImpl implements ProjectService {
             }
           });
 
-      //      taskTemplateList.sort(
-      //          new Comparator<TaskTemplate>() {
-      //            @Override
-      //            public int compare(TaskTemplate t1, TaskTemplate t2) {
-      //              return t1 == null || t1.getParentTaskTemplate() == null || t2 == null
-      //                  ? -1
-      //                  : t1.getParentTaskTemplate().getId().equals(t2.getId()) ? 1 : -1;
-      //            }
-      //          });
-
-      taskTemplateList.forEach(
-          it -> {
-            System.err.println(it.getName() + " : " + it.getParentTaskTemplate());
-          });
-
       if (taskTemplateList != null) {
         for (TaskTemplate taskTemplate : taskTemplateList) {
           createTask(taskTemplate, project, taskTemplateSet);
         }
-
-        //      if (taskTemplateSet != null) {
-        //        Iterator<TaskTemplate> taskTemplateItr = taskTemplateSet.iterator();
-        //
-        //        while (taskTemplateItr.hasNext()) {
-        //          createTask(taskTemplateItr.next(), project, taskTemplateSet);
-        //        }
       }
 
       return project;
@@ -232,11 +205,6 @@ public class ProjectServiceImpl implements ProjectService {
         }
       }
     }
-    //        && project.getTeamTaskList().stream()
-    //            .anyMatch(it -> it.getName().equals(taskTemplate.getName()))) {
-    //      return project.getTeamTaskList().stream().filter(it ->
-    // it.getName().equals(taskTemplate.getName())).findFirst().orElseGet(null);
-    //    }
     TeamTask task =
         teamTaskProjectService.create(
             taskTemplate.getName(), project, taskTemplate.getAssignedTo());
