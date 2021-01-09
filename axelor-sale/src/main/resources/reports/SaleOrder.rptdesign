@@ -898,7 +898,7 @@ reportContext.getDesignHandle().findMasterPage("Simple MasterPage").setProperty(
                     <structure>
                         <property name="position">60</property>
                         <property name="name">enablePackMangement</property>
-                        <property name="dataType">integer</property>
+                        <property name="dataType">boolean</property>
                     </structure>
                     <structure>
                         <property name="position">61</property>
@@ -1331,7 +1331,7 @@ reportContext.getDesignHandle().findMasterPage("Simple MasterPage").setProperty(
                     <property name="position">60</property>
                     <property name="name">enablePackMangement</property>
                     <property name="nativeName">enablePackMangement</property>
-                    <property name="dataType">integer</property>
+                    <property name="dataType">boolean</property>
                     <property name="nativeDataType">-7</property>
                 </structure>
                 <structure>
