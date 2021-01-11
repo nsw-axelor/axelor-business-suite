@@ -12,6 +12,7 @@
     <string name="specificPackage" large="true"/>
 
    	<many-to-many name="batchSet" ref="com.axelor.apps.base.db.Batch" title="Batchs"/>
+   	<string name="deliveryCondition" title="Delivery conditions" large="true" multiline="true"/>
    	
     <integer name="pfpValidateStatusSelect" title="PFP Status" selection="invoice.pfp.validate.status.select" readonly="true" default="1"/>
     <integer name="invoicingStatusSelect" title="Invoicing status" selection="supplychain.stock.move.invoicing.status.select" readonly="true" default="0"/>
